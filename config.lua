@@ -17,14 +17,14 @@ Config.EnableDebug          = false
 
 Config.IncompatibleResourcesToStop = {
 	['essentialmode'] = 'ES for short, the performance heavy RP framework no one uses - and source for the random unwanted ZAP ads you\'re seeing',
-	['es_admin2'] = 'Adminstration tool for the ancient ES framework that wont work with ESX',
+	['es_admin2'] = 'Adminstration tool for the ancient ES framework that wont work with RDX',
 	['esplugin_mysql'] = 'MySQL "plugin" for the ancient ES framework that has a SQL injection vulnerability',
 	['es_ui'] = 'Money HUD for ES',
-	['spawnmanager'] = 'Default resource that takes care of spawning players, ESX does this already',
+	['spawnmanager'] = 'Default resource that takes care of spawning players, RDX does this already',
 	['mapmanager'] = 'Default resource that was required by spawnmanager, but neither are used',
 	['basic-gamemode'] = 'Resource that is solely for choosing the default game type',
 	['fivem'] = 'Resource that is solely for choosing the default game type',
 	['fivem-map-hipster'] = 'Default spawn locations for mapmanager',
 	['fivem-map-skater'] = 'Default spawn locations for mapmanager',
-	['baseevents'] = 'Default resource for handling death events, ESX does this already'
+	['baseevents'] = 'Default resource for handling death events, RDX does this already'
 }

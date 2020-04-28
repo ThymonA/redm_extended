@@ -57,7 +57,6 @@ Locales['fi'] = {
   ['command_car'] = 'spawn an vehicle',
   ['command_car_car'] = 'vehicle spawn name or hash',
   ['command_cardel'] = 'delete vehicle in proximity',
-  ['command_cardel_radius'] = 'optional, delete every vehicle within the specified radius',
   ['command_clear'] = 'clear chat',
   ['command_clearall'] = 'clear chat for all players',
   ['command_clearinventory'] = 'clear player inventory',

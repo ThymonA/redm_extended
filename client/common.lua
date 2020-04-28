@@ -1,7 +1,11 @@
-AddEventHandler('esx:getSharedObject', function(cb)
-	cb(ESX)
+AddEventHandler('rdx:getSharedObject', function(cb)
+	cb(RDX)
+end)
+
+exports("getSharedObject", function()
+	return RDX
 end)
 
 function getSharedObject()
-	return ESX
+	return RDX
 end

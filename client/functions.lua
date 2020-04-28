@@ -1,110 +1,110 @@
-ESX                           = {}
-ESX.PlayerData                = {}
-ESX.PlayerLoaded              = false
-ESX.CurrentRequestId          = 0
-ESX.ServerCallbacks           = {}
-ESX.TimeoutCallbacks          = {}
+RDX                           = {}
+RDX.PlayerData                = {}
+RDX.PlayerLoaded              = false
+RDX.CurrentRequestId          = 0
+RDX.ServerCallbacks           = {}
+RDX.TimeoutCallbacks          = {}
 
-ESX.UI                        = {}
-ESX.UI.HUD                    = {}
-ESX.UI.HUD.RegisteredElements = {}
-ESX.UI.Menu                   = {}
-ESX.UI.Menu.RegisteredTypes   = {}
-ESX.UI.Menu.Opened            = {}
+RDX.UI                        = {}
+RDX.UI.HUD                    = {}
+RDX.UI.HUD.RegisteredElements = {}
+RDX.UI.Menu                   = {}
+RDX.UI.Menu.RegisteredTypes   = {}
+RDX.UI.Menu.Opened            = {}
 
-ESX.Game                      = {}
-ESX.Game.Utils                = {}
+RDX.Game                      = {}
+RDX.Game.Utils                = {}
 
-ESX.Scaleform                 = {}
-ESX.Scaleform.Utils           = {}
+RDX.Scaleform                 = {}
+RDX.Scaleform.Utils           = {}
 
-ESX.Streaming                 = {}
+RDX.Streaming                 = {}
 
-ESX.SetTimeout = function(msec, cb)
-	table.insert(ESX.TimeoutCallbacks, {
+RDX.SetTimeout = function(msec, cb)
+	table.insert(RDX.TimeoutCallbacks, {
 		time = GetGameTimer() + msec,
 		cb   = cb
 	})
-	return #ESX.TimeoutCallbacks
+	return #RDX.TimeoutCallbacks
 end
 
-ESX.ClearTimeout = function(i)
-	ESX.TimeoutCallbacks[i] = nil
+RDX.ClearTimeout = function(i)
+	RDX.TimeoutCallbacks[i] = nil
 end
 
-ESX.IsPlayerLoaded = function()
-	return ESX.PlayerLoaded
+RDX.IsPlayerLoaded = function()
+	return RDX.PlayerLoaded
 end
 
-ESX.GetPlayerData = function()
-	return ESX.PlayerData
+RDX.GetPlayerData = function()
+	return RDX.PlayerData
 end
 
-ESX.SetPlayerData = function(key, val)
-	ESX.PlayerData[key] = val
+RDX.SetPlayerData = function(key, val)
+	RDX.PlayerData[key] = val
 end
 
-ESX.ShowNotification = function(msg, flash, saveToBrief, hudColorIndex)
+RDX.ShowNotification = function(msg, flash, saveToBrief, hudColorIndex)
 	if saveToBrief == nil then saveToBrief = true end
-	AddTextEntry('esxNotification', msg)
-	BeginTextCommandThefeedPost('esxNotification')
+	AddTextEntry('rdxNotification', msg)
+	BeginTextCommandThefeedPost('rdxNotification')
 	if hudColorIndex then ThefeedNextPostBackgroundColor(hudColorIndex) end
 	EndTextCommandThefeedPostTicker(flash or false, saveToBrief)
 end
 
-ESX.ShowAdvancedNotification = function(sender, subject, msg, textureDict, iconType, flash, saveToBrief, hudColorIndex)
+RDX.ShowAdvancedNotification = function(sender, subject, msg, textureDict, iconType, flash, saveToBrief, hudColorIndex)
 	if saveToBrief == nil then saveToBrief = true end
-	AddTextEntry('esxAdvancedNotification', msg)
-	BeginTextCommandThefeedPost('esxAdvancedNotification')
+	AddTextEntry('rdxAdvancedNotification', msg)
+	BeginTextCommandThefeedPost('rdxAdvancedNotification')
 	if hudColorIndex then ThefeedNextPostBackgroundColor(hudColorIndex) end
 	EndTextCommandThefeedPostMessagetext(textureDict, textureDict, false, iconType, sender, subject)
 	EndTextCommandThefeedPostTicker(flash or false, saveToBrief)
 end
 
-ESX.ShowHelpNotification = function(msg, thisFrame, beep, duration)
-	AddTextEntry('esxHelpNotification', msg)
+RDX.ShowHelpNotification = function(msg, thisFrame, beep, duration)
+	AddTextEntry('rdxHelpNotification', msg)
 
 	if thisFrame then
-		DisplayHelpTextThisFrame('esxHelpNotification', false)
+		DisplayHelpTextThisFrame('rdxHelpNotification', false)
 	else
 		if beep == nil then beep = true end
-		BeginTextCommandDisplayHelp('esxHelpNotification')
+		BeginTextCommandDisplayHelp('rdxHelpNotification')
 		EndTextCommandDisplayHelp(0, false, beep, duration or -1)
 	end
 end
 
-ESX.ShowFloatingHelpNotification = function(msg, coords)
-	AddTextEntry('esxFloatingHelpNotification', msg)
+RDX.ShowFloatingHelpNotification = function(msg, coords)
+	AddTextEntry('rdxFloatingHelpNotification', msg)
 	SetFloatingHelpTextWorldPosition(1, coords)
 	SetFloatingHelpTextStyle(1, 1, 2, -1, 3, 0)
-	BeginTextCommandDisplayHelp('esxFloatingHelpNotification')
+	BeginTextCommandDisplayHelp('rdxFloatingHelpNotification')
 	EndTextCommandDisplayHelp(2, false, false, -1)
 end
 
-ESX.TriggerServerCallback = function(name, cb, ...)
-	ESX.ServerCallbacks[ESX.CurrentRequestId] = cb
+RDX.TriggerServerCallback = function(name, cb, ...)
+	RDX.ServerCallbacks[RDX.CurrentRequestId] = cb
 
-	TriggerServerEvent('esx:triggerServerCallback', name, ESX.CurrentRequestId, ...)
+	TriggerServerEvent('rdx:triggerServerCallback', name, RDX.CurrentRequestId, ...)
 
-	if ESX.CurrentRequestId < 65535 then
-		ESX.CurrentRequestId = ESX.CurrentRequestId + 1
+	if RDX.CurrentRequestId < 65535 then
+		RDX.CurrentRequestId = RDX.CurrentRequestId + 1
 	else
-		ESX.CurrentRequestId = 0
+		RDX.CurrentRequestId = 0
 	end
 end
 
-ESX.UI.HUD.SetDisplay = function(opacity)
+RDX.UI.HUD.SetDisplay = function(opacity)
 	SendNUIMessage({
 		action  = 'setHUDDisplay',
 		opacity = opacity
 	})
 end
 
-ESX.UI.HUD.RegisterElement = function(name, index, priority, html, data)
+RDX.UI.HUD.RegisterElement = function(name, index, priority, html, data)
 	local found = false
 
-	for i=1, #ESX.UI.HUD.RegisteredElements, 1 do
-		if ESX.UI.HUD.RegisteredElements[i] == name then
+	for i=1, #RDX.UI.HUD.RegisteredElements, 1 do
+		if RDX.UI.HUD.RegisteredElements[i] == name then
 			found = true
 			break
 		end
@@ -114,7 +114,7 @@ ESX.UI.HUD.RegisterElement = function(name, index, priority, html, data)
 		return
 	end
 
-	table.insert(ESX.UI.HUD.RegisteredElements, name)
+	table.insert(RDX.UI.HUD.RegisteredElements, name)
 
 	SendNUIMessage({
 		action    = 'insertHUDElement',
@@ -125,13 +125,13 @@ ESX.UI.HUD.RegisterElement = function(name, index, priority, html, data)
 		data      = data
 	})
 
-	ESX.UI.HUD.UpdateElement(name, data)
+	RDX.UI.HUD.UpdateElement(name, data)
 end
 
-ESX.UI.HUD.RemoveElement = function(name)
-	for i=1, #ESX.UI.HUD.RegisteredElements, 1 do
-		if ESX.UI.HUD.RegisteredElements[i] == name then
-			table.remove(ESX.UI.HUD.RegisteredElements, i)
+RDX.UI.HUD.RemoveElement = function(name)
+	for i=1, #RDX.UI.HUD.RegisteredElements, 1 do
+		if RDX.UI.HUD.RegisteredElements[i] == name then
+			table.remove(RDX.UI.HUD.RegisteredElements, i)
 			break
 		end
 	end
@@ -142,7 +142,7 @@ ESX.UI.HUD.RemoveElement = function(name)
 	})
 end
 
-ESX.UI.HUD.UpdateElement = function(name, data)
+RDX.UI.HUD.UpdateElement = function(name, data)
 	SendNUIMessage({
 		action = 'updateHUDElement',
 		name   = name,
@@ -150,14 +150,14 @@ ESX.UI.HUD.UpdateElement = function(name, data)
 	})
 end
 
-ESX.UI.Menu.RegisterType = function(type, open, close)
-	ESX.UI.Menu.RegisteredTypes[type] = {
+RDX.UI.Menu.RegisterType = function(type, open, close)
+	RDX.UI.Menu.RegisteredTypes[type] = {
 		open   = open,
 		close  = close
 	}
 end
 
-ESX.UI.Menu.Open = function(type, namespace, name, data, submit, cancel, change, close)
+RDX.UI.Menu.Open = function(type, namespace, name, data, submit, cancel, change, close)
 	local menu = {}
 
 	menu.type      = type
@@ -170,12 +170,12 @@ ESX.UI.Menu.Open = function(type, namespace, name, data, submit, cancel, change,
 
 	menu.close = function()
 
-		ESX.UI.Menu.RegisteredTypes[type].close(namespace, name)
+		RDX.UI.Menu.RegisteredTypes[type].close(namespace, name)
 
-		for i=1, #ESX.UI.Menu.Opened, 1 do
-			if ESX.UI.Menu.Opened[i] then
-				if ESX.UI.Menu.Opened[i].type == type and ESX.UI.Menu.Opened[i].namespace == namespace and ESX.UI.Menu.Opened[i].name == name then
-					ESX.UI.Menu.Opened[i] = nil
+		for i=1, #RDX.UI.Menu.Opened, 1 do
+			if RDX.UI.Menu.Opened[i] then
+				if RDX.UI.Menu.Opened[i].type == type and RDX.UI.Menu.Opened[i].namespace == namespace and RDX.UI.Menu.Opened[i].name == name then
+					RDX.UI.Menu.Opened[i] = nil
 				end
 			end
 		end
@@ -207,7 +207,7 @@ ESX.UI.Menu.Open = function(type, namespace, name, data, submit, cancel, change,
 	end
 
 	menu.refresh = function()
-		ESX.UI.Menu.RegisteredTypes[type].open(namespace, name, menu.data)
+		RDX.UI.Menu.RegisteredTypes[type].open(namespace, name, menu.data)
 	end
 
 	menu.setElement = function(i, key, val)
@@ -236,51 +236,51 @@ ESX.UI.Menu.Open = function(type, namespace, name, data, submit, cancel, change,
 		end
 	end
 
-	table.insert(ESX.UI.Menu.Opened, menu)
-	ESX.UI.Menu.RegisteredTypes[type].open(namespace, name, data)
+	table.insert(RDX.UI.Menu.Opened, menu)
+	RDX.UI.Menu.RegisteredTypes[type].open(namespace, name, data)
 
 	return menu
 end
 
-ESX.UI.Menu.Close = function(type, namespace, name)
-	for i=1, #ESX.UI.Menu.Opened, 1 do
-		if ESX.UI.Menu.Opened[i] then
-			if ESX.UI.Menu.Opened[i].type == type and ESX.UI.Menu.Opened[i].namespace == namespace and ESX.UI.Menu.Opened[i].name == name then
-				ESX.UI.Menu.Opened[i].close()
-				ESX.UI.Menu.Opened[i] = nil
+RDX.UI.Menu.Close = function(type, namespace, name)
+	for i=1, #RDX.UI.Menu.Opened, 1 do
+		if RDX.UI.Menu.Opened[i] then
+			if RDX.UI.Menu.Opened[i].type == type and RDX.UI.Menu.Opened[i].namespace == namespace and RDX.UI.Menu.Opened[i].name == name then
+				RDX.UI.Menu.Opened[i].close()
+				RDX.UI.Menu.Opened[i] = nil
 			end
 		end
 	end
 end
 
-ESX.UI.Menu.CloseAll = function()
-	for i=1, #ESX.UI.Menu.Opened, 1 do
-		if ESX.UI.Menu.Opened[i] then
-			ESX.UI.Menu.Opened[i].close()
-			ESX.UI.Menu.Opened[i] = nil
+RDX.UI.Menu.CloseAll = function()
+	for i=1, #RDX.UI.Menu.Opened, 1 do
+		if RDX.UI.Menu.Opened[i] then
+			RDX.UI.Menu.Opened[i].close()
+			RDX.UI.Menu.Opened[i] = nil
 		end
 	end
 end
 
-ESX.UI.Menu.GetOpened = function(type, namespace, name)
-	for i=1, #ESX.UI.Menu.Opened, 1 do
-		if ESX.UI.Menu.Opened[i] then
-			if ESX.UI.Menu.Opened[i].type == type and ESX.UI.Menu.Opened[i].namespace == namespace and ESX.UI.Menu.Opened[i].name == name then
-				return ESX.UI.Menu.Opened[i]
+RDX.UI.Menu.GetOpened = function(type, namespace, name)
+	for i=1, #RDX.UI.Menu.Opened, 1 do
+		if RDX.UI.Menu.Opened[i] then
+			if RDX.UI.Menu.Opened[i].type == type and RDX.UI.Menu.Opened[i].namespace == namespace and RDX.UI.Menu.Opened[i].name == name then
+				return RDX.UI.Menu.Opened[i]
 			end
 		end
 	end
 end
 
-ESX.UI.Menu.GetOpenedMenus = function()
-	return ESX.UI.Menu.Opened
+RDX.UI.Menu.GetOpenedMenus = function()
+	return RDX.UI.Menu.Opened
 end
 
-ESX.UI.Menu.IsOpen = function(type, namespace, name)
-	return ESX.UI.Menu.GetOpened(type, namespace, name) ~= nil
+RDX.UI.Menu.IsOpen = function(type, namespace, name)
+	return RDX.UI.Menu.GetOpened(type, namespace, name) ~= nil
 end
 
-ESX.UI.ShowInventoryItemNotification = function(add, item, count)
+RDX.UI.ShowInventoryItemNotification = function(add, item, count)
 	SendNUIMessage({
 		action = 'inventoryNotification',
 		add    = add,
@@ -289,7 +289,7 @@ ESX.UI.ShowInventoryItemNotification = function(add, item, count)
 	})
 end
 
-ESX.Game.GetPedMugshot = function(ped, transparent)
+RDX.Game.GetPedMugshot = function(ped, transparent)
 	if DoesEntityExist(ped) then
 		local mugshot
 
@@ -309,7 +309,7 @@ ESX.Game.GetPedMugshot = function(ped, transparent)
 	end
 end
 
-ESX.Game.Teleport = function(entity, coords, cb)
+RDX.Game.Teleport = function(entity, coords, cb)
 	if DoesEntityExist(entity) then
 		RequestCollisionAtCoord(coords.x, coords.y, coords.z)
 		local timeout = 0
@@ -332,11 +332,11 @@ ESX.Game.Teleport = function(entity, coords, cb)
 	end
 end
 
-ESX.Game.SpawnObject = function(model, coords, cb)
+RDX.Game.SpawnObject = function(model, coords, cb)
 	local model = (type(model) == 'number' and model or GetHashKey(model))
 
 	Citizen.CreateThread(function()
-		ESX.Streaming.RequestModel(model)
+		RDX.Streaming.RequestModel(model)
 		local obj = CreateObject(model, coords.x, coords.y, coords.z, true, false, true)
 		SetModelAsNoLongerNeeded(model)
 
@@ -346,11 +346,11 @@ ESX.Game.SpawnObject = function(model, coords, cb)
 	end)
 end
 
-ESX.Game.SpawnLocalObject = function(model, coords, cb)
+RDX.Game.SpawnLocalObject = function(model, coords, cb)
 	local model = (type(model) == 'number' and model or GetHashKey(model))
 
 	Citizen.CreateThread(function()
-		ESX.Streaming.RequestModel(model)
+		RDX.Streaming.RequestModel(model)
 		local obj = CreateObject(model, coords.x, coords.y, coords.z, false, false, true)
 		SetModelAsNoLongerNeeded(model)
 
@@ -360,82 +360,76 @@ ESX.Game.SpawnLocalObject = function(model, coords, cb)
 	end)
 end
 
-ESX.Game.DeleteVehicle = function(vehicle)
+RDX.Game.DeleteVehicle = function(vehicle)
 	SetEntityAsMissionEntity(vehicle, false, true)
 	DeleteVehicle(vehicle)
 end
 
-ESX.Game.DeleteObject = function(object)
+RDX.Game.DeleteObject = function(object)
 	SetEntityAsMissionEntity(object, false, true)
 	DeleteObject(object)
 end
 
-ESX.Game.SpawnVehicle = function(modelName, coords, heading, cb)
-	local model = (type(modelName) == 'number' and modelName or GetHashKey(modelName))
+RDX.Game.SpawnVehicle = function(model, coords, heading, cb)
+	model = (type(model) == 'number' and model or GetHashKey(model))
 
 	Citizen.CreateThread(function()
-		ESX.Streaming.RequestModel(model)
+		RDX.Streaming.RequestModel(model, function()
+			local vehicle = CreateVehicle(model, coords.x, coords.y, coords.z, heading, true, false)
+			local timeout = 0
 
-		local vehicle = CreateVehicle(model, coords.x, coords.y, coords.z, heading, true, false)
-		local networkId = NetworkGetNetworkIdFromEntity(vehicle)
-		local timeout = 0
+			SetEntityAsMissionEntity(vehicle, true, false)
+			SetVehicleHasBeenOwnedByPlayer(vehicle, true)
+			SetModelAsNoLongerNeeded(model)
+			RequestCollisionAtCoord(coords.x, coords.y, coords.z)
 
-		SetNetworkIdCanMigrate(networkId, true)
-		SetEntityAsMissionEntity(vehicle, true, false)
-		SetVehicleHasBeenOwnedByPlayer(vehicle, true)
-		SetVehicleNeedsToBeHotwired(vehicle, false)
-		SetVehRadioStation(vehicle, 'OFF')
-		SetModelAsNoLongerNeeded(model)
-		RequestCollisionAtCoord(coords.x, coords.y, coords.z)
+			-- we can get stuck here if any of the axies are "invalid"
+			while not HasCollisionLoadedAroundEntity(vehicle) and timeout < 2000 do
+				Citizen.Wait(0)
+				timeout = timeout + 1
+			end
 
-		-- we can get stuck here if any of the axies are "invalid"
-		while not HasCollisionLoadedAroundEntity(vehicle) and timeout < 2000 do
-			Citizen.Wait(0)
-			timeout = timeout + 1
-		end
-
-		if cb then
-			cb(vehicle)
-		end
+			if cb then
+				cb(vehicle)
+			end
+		end)
 	end)
 end
 
-ESX.Game.SpawnLocalVehicle = function(modelName, coords, heading, cb)
-	local model = (type(modelName) == 'number' and modelName or GetHashKey(modelName))
+RDX.Game.SpawnLocalVehicle = function(model, coords, heading, cb)
+	model = (type(model) == 'number' and model or GetHashKey(model))
 
 	Citizen.CreateThread(function()
-		ESX.Streaming.RequestModel(model)
+		RDX.Streaming.RequestModel(model, function()
+			local vehicle = CreateVehicle(model, coords.x, coords.y, coords.z, heading, false, false)
+			local timeout = 0
 
-		local vehicle = CreateVehicle(model, coords.x, coords.y, coords.z, heading, false, false)
-		local timeout = 0
+			SetEntityAsMissionEntity(vehicle, true, false)
+			SetVehicleHasBeenOwnedByPlayer(vehicle, true)
+			SetModelAsNoLongerNeeded(model)
+			RequestCollisionAtCoord(coords.x, coords.y, coords.z)
 
-		SetEntityAsMissionEntity(vehicle, true, false)
-		SetVehicleHasBeenOwnedByPlayer(vehicle, true)
-		SetVehicleNeedsToBeHotwired(vehicle, false)
-		SetVehRadioStation(vehicle, 'OFF')
-		SetModelAsNoLongerNeeded(model)
-		RequestCollisionAtCoord(coords.x, coords.y, coords.z)
+			-- we can get stuck here if any of the axies are "invalid"
+			while not HasCollisionLoadedAroundEntity(vehicle) and timeout < 2000 do
+				Citizen.Wait(0)
+				timeout = timeout + 1
+			end
 
-		-- we can get stuck here if any of the axies are "invalid"
-		while not HasCollisionLoadedAroundEntity(vehicle) and timeout < 2000 do
-			Citizen.Wait(0)
-			timeout = timeout + 1
-		end
-
-		if cb then
-			cb(vehicle)
-		end
+			if cb then
+				cb(vehicle)
+			end
+		end)
 	end)
 end
 
-ESX.Game.IsVehicleEmpty = function(vehicle)
+RDX.Game.IsVehicleEmpty = function(vehicle)
 	local passengers = GetVehicleNumberOfPassengers(vehicle)
 	local driverSeatFree = IsVehicleSeatFree(vehicle, -1)
 
 	return passengers == 0 and driverSeatFree
 end
 
-ESX.Game.GetObjects = function()
+RDX.Game.GetObjects = function()
 	local objects = {}
 
 	for object in EnumerateObjects() do
@@ -445,7 +439,7 @@ ESX.Game.GetObjects = function()
 	return objects
 end
 
-ESX.Game.GetPeds = function(onlyOtherPeds)
+RDX.Game.GetPeds = function(onlyOtherPeds)
 	local peds, myPed = {}, PlayerPedId()
 
 	for ped in EnumeratePeds() do
@@ -457,7 +451,7 @@ ESX.Game.GetPeds = function(onlyOtherPeds)
 	return peds
 end
 
-ESX.Game.GetVehicles = function()
+RDX.Game.GetVehicles = function()
 	local vehicles = {}
 
 	for vehicle in EnumerateVehicles() do
@@ -467,7 +461,7 @@ ESX.Game.GetVehicles = function()
 	return vehicles
 end
 
-ESX.Game.GetPlayers = function(onlyOtherPlayers, returnKeyValue, returnPeds)
+RDX.Game.GetPlayers = function(onlyOtherPlayers, returnKeyValue, returnPeds)
 	local players, myPlayer = {}, PlayerId()
 
 	for k,player in ipairs(GetActivePlayers()) do
@@ -485,15 +479,15 @@ ESX.Game.GetPlayers = function(onlyOtherPlayers, returnKeyValue, returnPeds)
 	return players
 end
 
-ESX.Game.GetClosestObject = function(coords, modelFilter) return ESX.Game.GetClosestEntity(ESX.Game.GetObjects(), false, coords, modelFilter) end
-ESX.Game.GetClosestPed = function(coords, modelFilter) return ESX.Game.GetClosestEntity(ESX.Game.GetPeds(true), false, coords, modelFilter) end
-ESX.Game.GetClosestPlayer = function(coords) return ESX.Game.GetClosestEntity(ESX.Game.GetPlayers(true, true), true, coords, nil) end
-ESX.Game.GetClosestVehicle = function(coords, modelFilter) return ESX.Game.GetClosestEntity(ESX.Game.GetVehicles(), false, coords, modelFilter) end
-ESX.Game.GetPlayersInArea = function(coords, maxDistance) return EnumerateEntitiesWithinDistance(ESX.Game.GetPlayers(true, true), true, coords, maxDistance) end
-ESX.Game.GetVehiclesInArea = function(coords, maxDistance) return EnumerateEntitiesWithinDistance(ESX.Game.GetVehicles(), false, coords, maxDistance) end
-ESX.Game.IsSpawnPointClear = function(coords, maxDistance) return #ESX.Game.GetVehiclesInArea(coords, maxDistance) == 0 end
+RDX.Game.GetClosestObject = function(coords, modelFilter) return RDX.Game.GetClosestEntity(RDX.Game.GetObjects(), false, coords, modelFilter) end
+RDX.Game.GetClosestPed = function(coords, modelFilter) return RDX.Game.GetClosestEntity(RDX.Game.GetPeds(true), false, coords, modelFilter) end
+RDX.Game.GetClosestPlayer = function(coords) return RDX.Game.GetClosestEntity(RDX.Game.GetPlayers(true, true), true, coords, nil) end
+RDX.Game.GetClosestVehicle = function(coords, modelFilter) return RDX.Game.GetClosestEntity(RDX.Game.GetVehicles(), false, coords, modelFilter) end
+RDX.Game.GetPlayersInArea = function(coords, maxDistance) return EnumerateEntitiesWithinDistance(RDX.Game.GetPlayers(true, true), true, coords, maxDistance) end
+RDX.Game.GetVehiclesInArea = function(coords, maxDistance) return EnumerateEntitiesWithinDistance(RDX.Game.GetVehicles(), false, coords, maxDistance) end
+RDX.Game.IsSpawnPointClear = function(coords, maxDistance) return #RDX.Game.GetVehiclesInArea(coords, maxDistance) == 0 end
 
-ESX.Game.GetClosestEntity = function(entities, isPlayerEntities, coords, modelFilter)
+RDX.Game.GetClosestEntity = function(entities, isPlayerEntities, coords, modelFilter)
 	local closestEntity, closestEntityDistance, filteredEntities = -1, -1, nil
 
 	if coords then
@@ -524,7 +518,7 @@ ESX.Game.GetClosestEntity = function(entities, isPlayerEntities, coords, modelFi
 	return closestEntity, closestEntityDistance
 end
 
-ESX.Game.GetVehicleInDirection = function()
+RDX.Game.GetVehicleInDirection = function()
 	local playerPed    = PlayerPedId()
 	local playerCoords = GetEntityCoords(playerPed)
 	local inDirection  = GetOffsetFromEntityInWorldCoords(playerPed, 0.0, 5.0, 0.0)
@@ -538,7 +532,7 @@ ESX.Game.GetVehicleInDirection = function()
 	return nil
 end
 
-ESX.Game.GetVehicleProperties = function(vehicle)
+RDX.Game.GetVehicleProperties = function(vehicle)
 	if DoesEntityExist(vehicle) then
 		local colorPrimary, colorSecondary = GetVehicleColours(vehicle)
 		local pearlescentColor, wheelColor = GetVehicleExtraColours(vehicle)
@@ -554,15 +548,15 @@ ESX.Game.GetVehicleProperties = function(vehicle)
 		return {
 			model             = GetEntityModel(vehicle),
 
-			plate             = ESX.Math.Trim(GetVehicleNumberPlateText(vehicle)),
+			plate             = RDX.Math.Trim(GetVehicleNumberPlateText(vehicle)),
 			plateIndex        = GetVehicleNumberPlateTextIndex(vehicle),
 
-			bodyHealth        = ESX.Math.Round(GetVehicleBodyHealth(vehicle), 1),
-			engineHealth      = ESX.Math.Round(GetVehicleEngineHealth(vehicle), 1),
-			tankHealth        = ESX.Math.Round(GetVehiclePetrolTankHealth(vehicle), 1),
+			bodyHealth        = RDX.Math.Round(GetVehicleBodyHealth(vehicle), 1),
+			engineHealth      = RDX.Math.Round(GetVehicleEngineHealth(vehicle), 1),
+			tankHealth        = RDX.Math.Round(GetVehiclePetrolTankHealth(vehicle), 1),
 
-			fuelLevel         = ESX.Math.Round(GetVehicleFuelLevel(vehicle), 1),
-			dirtLevel         = ESX.Math.Round(GetVehicleDirtLevel(vehicle), 1),
+			fuelLevel         = RDX.Math.Round(GetVehicleFuelLevel(vehicle), 1),
+			dirtLevel         = RDX.Math.Round(GetVehicleDirtLevel(vehicle), 1),
 			color1            = colorPrimary,
 			color2            = colorSecondary,
 
@@ -639,7 +633,7 @@ ESX.Game.GetVehicleProperties = function(vehicle)
 	end
 end
 
-ESX.Game.SetVehicleProperties = function(vehicle, props)
+RDX.Game.SetVehicleProperties = function(vehicle, props)
 	if DoesEntityExist(vehicle) then
 		local colorPrimary, colorSecondary = GetVehicleColours(vehicle)
 		local pearlescentColor, wheelColor = GetVehicleExtraColours(vehicle)
@@ -731,7 +725,7 @@ ESX.Game.SetVehicleProperties = function(vehicle, props)
 	end
 end
 
-ESX.Game.Utils.DrawText3D = function(coords, text, size, font)
+RDX.Game.Utils.DrawText3D = function(coords, text, size, font)
 	coords = vector3(coords.x, coords.y, coords.z)
 
 	local camCoords = GetGameplayCamCoords()
@@ -759,13 +753,13 @@ ESX.Game.Utils.DrawText3D = function(coords, text, size, font)
 	ClearDrawOrigin()
 end
 
-ESX.ShowInventory = function()
+RDX.ShowInventory = function()
 	local playerPed = PlayerPedId()
 	local elements, currentWeight = {}, 0
 
-	for k,v in pairs(ESX.PlayerData.accounts) do
+	for k,v in pairs(RDX.PlayerData.accounts) do
 		if v.money > 0 then
-			local formattedMoney = _U('locale_currency', ESX.Math.GroupDigits(v.money))
+			local formattedMoney = _U('locale_currency', RDX.Math.GroupDigits(v.money))
 			local canDrop = v.name ~= 'bank'
 
 			table.insert(elements, {
@@ -780,7 +774,7 @@ ESX.ShowInventory = function()
 		end
 	end
 
-	for k,v in ipairs(ESX.PlayerData.inventory) do
+	for k,v in ipairs(RDX.PlayerData.inventory) do
 		if v.count > 0 then
 			currentWeight = currentWeight + (v.weight * v.count)
 
@@ -822,15 +816,15 @@ ESX.ShowInventory = function()
 		end
 	end
 
-	ESX.UI.Menu.CloseAll()
+	RDX.UI.Menu.CloseAll()
 
-	ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'inventory', {
-		title    = _U('inventory', currentWeight, ESX.PlayerData.maxWeight),
+	RDX.UI.Menu.Open('default', GetCurrentResourceName(), 'inventory', {
+		title    = _U('inventory', currentWeight, RDX.PlayerData.maxWeight),
 		align    = 'bottom-right',
 		elements = elements
 	}, function(data, menu)
 		menu.close()
-		local player, distance = ESX.Game.GetClosestPlayer()
+		local player, distance = RDX.Game.GetClosestPlayer()
 		elements = {}
 
 		if data.current.usable then
@@ -851,7 +845,7 @@ ESX.ShowInventory = function()
 
 		table.insert(elements, {label = _U('return'), action = 'return'})
 
-		ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'inventory_item', {
+		RDX.UI.Menu.Open('default', GetCurrentResourceName(), 'inventory_item', {
 			title    = data.current.label,
 			align    = 'bottom-right',
 			elements = elements,
@@ -859,7 +853,7 @@ ESX.ShowInventory = function()
 			local item, type = data1.current.value, data1.current.type
 
 			if data1.current.action == 'give' then
-				local playersNearby = ESX.Game.GetPlayersInArea(GetEntityCoords(playerPed), 3.0)
+				local playersNearby = RDX.Game.GetPlayersInArea(GetEntityCoords(playerPed), 3.0)
 
 				if #playersNearby > 0 then
 					local players = {}
@@ -869,7 +863,7 @@ ESX.ShowInventory = function()
 						players[GetPlayerServerId(playerNearby)] = true
 					end
 
-					ESX.TriggerServerCallback('esx:getPlayerNames', function(returnedPlayers)
+					RDX.TriggerServerCallback('rdx:getPlayerNames', function(returnedPlayers)
 						for playerId,playerName in pairs(returnedPlayers) do
 							table.insert(elements, {
 								label = playerName,
@@ -877,46 +871,46 @@ ESX.ShowInventory = function()
 							})
 						end
 
-						ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'give_item_to', {
+						RDX.UI.Menu.Open('default', GetCurrentResourceName(), 'give_item_to', {
 							title    = _U('give_to'),
 							align    = 'bottom-right',
 							elements = elements
 						}, function(data2, menu2)
 							local selectedPlayer, selectedPlayerId = GetPlayerFromServerId(data2.current.playerId), data2.current.playerId
-							playersNearby = ESX.Game.GetPlayersInArea(GetEntityCoords(playerPed), 3.0)
-							playersNearby = ESX.Table.Set(playersNearby)
+							playersNearby = RDX.Game.GetPlayersInArea(GetEntityCoords(playerPed), 3.0)
+							playersNearby = RDX.Table.Set(playersNearby)
 
 							if playersNearby[selectedPlayer] then
 								local selectedPlayerPed = GetPlayerPed(selectedPlayer)
 
 								if IsPedOnFoot(selectedPlayerPed) and not IsPedFalling(selectedPlayerPed) then
 									if type == 'item_weapon' then
-										TriggerServerEvent('esx:giveInventoryItem', selectedPlayerId, type, item, nil)
+										TriggerServerEvent('rdx:giveInventoryItem', selectedPlayerId, type, item, nil)
 										menu2.close()
 										menu1.close()
 									else
-										ESX.UI.Menu.Open('dialog', GetCurrentResourceName(), 'inventory_item_count_give', {
+										RDX.UI.Menu.Open('dialog', GetCurrentResourceName(), 'inventory_item_count_give', {
 											title = _U('amount')
 										}, function(data3, menu3)
 											local quantity = tonumber(data3.value)
 
 											if quantity and quantity > 0 and data.current.count >= quantity then
-												TriggerServerEvent('esx:giveInventoryItem', selectedPlayerId, type, item, quantity)
+												TriggerServerEvent('rdx:giveInventoryItem', selectedPlayerId, type, item, quantity)
 												menu3.close()
 												menu2.close()
 												menu1.close()
 											else
-												ESX.ShowNotification(_U('amount_invalid'))
+												RDX.ShowNotification(_U('amount_invalid'))
 											end
 										end, function(data3, menu3)
 											menu3.close()
 										end)
 									end
 								else
-									ESX.ShowNotification(_U('in_vehicle'))
+									RDX.ShowNotification(_U('in_vehicle'))
 								end
 							else
-								ESX.ShowNotification(_U('players_nearby'))
+								RDX.ShowNotification(_U('players_nearby'))
 								menu2.close()
 							end
 						end, function(data2, menu2)
@@ -924,20 +918,20 @@ ESX.ShowInventory = function()
 						end)
 					end, players)
 				else
-					ESX.ShowNotification(_U('players_nearby'))
+					RDX.ShowNotification(_U('players_nearby'))
 				end
 			elseif data1.current.action == 'remove' then
 				if IsPedOnFoot(playerPed) and not IsPedFalling(playerPed) then
 					local dict, anim = 'weapons@first_person@aim_rng@generic@projectile@sticky_bomb@', 'plant_floor'
-					ESX.Streaming.RequestAnimDict(dict)
+					RDX.Streaming.RequestAnimDict(dict)
 
 					if type == 'item_weapon' then
 						menu1.close()
 						TaskPlayAnim(playerPed, dict, anim, 8.0, 1.0, 1000, 16, 0.0, false, false, false)
 						Citizen.Wait(1000)
-						TriggerServerEvent('esx:removeInventoryItem', type, item)
+						TriggerServerEvent('rdx:removeInventoryItem', type, item)
 					else
-						ESX.UI.Menu.Open('dialog', GetCurrentResourceName(), 'inventory_item_count_remove', {
+						RDX.UI.Menu.Open('dialog', GetCurrentResourceName(), 'inventory_item_count_remove', {
 							title = _U('amount')
 						}, function(data2, menu2)
 							local quantity = tonumber(data2.value)
@@ -947,9 +941,9 @@ ESX.ShowInventory = function()
 								menu1.close()
 								TaskPlayAnim(playerPed, dict, anim, 8.0, 1.0, 1000, 16, 0.0, false, false, false)
 								Citizen.Wait(1000)
-								TriggerServerEvent('esx:removeInventoryItem', type, item, quantity)
+								TriggerServerEvent('rdx:removeInventoryItem', type, item, quantity)
 							else
-								ESX.ShowNotification(_U('amount_invalid'))
+								RDX.ShowNotification(_U('amount_invalid'))
 							end
 						end, function(data2, menu2)
 							menu2.close()
@@ -957,74 +951,74 @@ ESX.ShowInventory = function()
 					end
 				end
 			elseif data1.current.action == 'use' then
-				TriggerServerEvent('esx:useItem', item)
+				TriggerServerEvent('rdx:useItem', item)
 			elseif data1.current.action == 'return' then
-				ESX.UI.Menu.CloseAll()
-				ESX.ShowInventory()
+				RDX.UI.Menu.CloseAll()
+				RDX.ShowInventory()
 			elseif data1.current.action == 'give_ammo' then
-				local closestPlayer, closestDistance = ESX.Game.GetClosestPlayer()
+				local closestPlayer, closestDistance = RDX.Game.GetClosestPlayer()
 				local pedAmmo = GetAmmoInPedWeapon(playerPed, GetHashKey(item))
 
 				if IsPedOnFoot(closestPed) and not IsPedFalling(closestPed) then
 					if closestPlayer ~= -1 and closestDistance < 3.0 then
 						if pedAmmo > 0 then
-							ESX.UI.Menu.Open('dialog', GetCurrentResourceName(), 'inventory_item_count_give', {
+							RDX.UI.Menu.Open('dialog', GetCurrentResourceName(), 'inventory_item_count_give', {
 								title = _U('amountammo')
 							}, function(data2, menu2)
 								local quantity = tonumber(data2.value)
 
 								if quantity and quantity > 0 then
 									if pedAmmo >= quantity then
-										TriggerServerEvent('esx:giveInventoryItem', GetPlayerServerId(closestPlayer), 'item_ammo', item, quantity)
+										TriggerServerEvent('rdx:giveInventoryItem', GetPlayerServerId(closestPlayer), 'item_ammo', item, quantity)
 										menu2.close()
 										menu1.close()
 									else
-										ESX.ShowNotification(_U('noammo'))
+										RDX.ShowNotification(_U('noammo'))
 									end
 								else
-									ESX.ShowNotification(_U('amount_invalid'))
+									RDX.ShowNotification(_U('amount_invalid'))
 								end
 							end, function(data2, menu2)
 								menu2.close()
 							end)
 						else
-							ESX.ShowNotification(_U('noammo'))
+							RDX.ShowNotification(_U('noammo'))
 						end
 					else
-						ESX.ShowNotification(_U('players_nearby'))
+						RDX.ShowNotification(_U('players_nearby'))
 					end
 				else
-					ESX.ShowNotification(_U('in_vehicle'))
+					RDX.ShowNotification(_U('in_vehicle'))
 				end
 			end
 		end, function(data1, menu1)
-			ESX.UI.Menu.CloseAll()
-			ESX.ShowInventory()
+			RDX.UI.Menu.CloseAll()
+			RDX.ShowInventory()
 		end)
 	end, function(data, menu)
 		menu.close()
 	end)
 end
 
-RegisterNetEvent('esx:serverCallback')
-AddEventHandler('esx:serverCallback', function(requestId, ...)
-	ESX.ServerCallbacks[requestId](...)
-	ESX.ServerCallbacks[requestId] = nil
+RegisterNetEvent('rdx:serverCallback')
+AddEventHandler('rdx:serverCallback', function(requestId, ...)
+	RDX.ServerCallbacks[requestId](...)
+	RDX.ServerCallbacks[requestId] = nil
 end)
 
-RegisterNetEvent('esx:showNotification')
-AddEventHandler('esx:showNotification', function(msg, flash, saveToBrief, hudColorIndex)
-	ESX.ShowNotification(msg, flash, saveToBrief, hudColorIndex)
+RegisterNetEvent('rdx:showNotification')
+AddEventHandler('rdx:showNotification', function(msg, flash, saveToBrief, hudColorIndex)
+	RDX.ShowNotification(msg, flash, saveToBrief, hudColorIndex)
 end)
 
-RegisterNetEvent('esx:showAdvancedNotification')
-AddEventHandler('esx:showAdvancedNotification', function(sender, subject, msg, textureDict, iconType, flash, saveToBrief, hudColorIndex)
-	ESX.ShowAdvancedNotification(sender, subject, msg, textureDict, iconType, flash, saveToBrief, hudColorIndex)
+RegisterNetEvent('rdx:showAdvancedNotification')
+AddEventHandler('rdx:showAdvancedNotification', function(sender, subject, msg, textureDict, iconType, flash, saveToBrief, hudColorIndex)
+	RDX.ShowAdvancedNotification(sender, subject, msg, textureDict, iconType, flash, saveToBrief, hudColorIndex)
 end)
 
-RegisterNetEvent('esx:showHelpNotification')
-AddEventHandler('esx:showHelpNotification', function(msg, thisFrame, beep, duration)
-	ESX.ShowHelpNotification(msg, thisFrame, beep, duration)
+RegisterNetEvent('rdx:showHelpNotification')
+AddEventHandler('rdx:showHelpNotification', function(msg, thisFrame, beep, duration)
+	RDX.ShowHelpNotification(msg, thisFrame, beep, duration)
 end)
 
 -- SetTimeout
@@ -1033,11 +1027,11 @@ Citizen.CreateThread(function()
 		Citizen.Wait(0)
 		local currTime = GetGameTimer()
 
-		for i=1, #ESX.TimeoutCallbacks, 1 do
-			if ESX.TimeoutCallbacks[i] then
-				if currTime >= ESX.TimeoutCallbacks[i].time then
-					ESX.TimeoutCallbacks[i].cb()
-					ESX.TimeoutCallbacks[i] = nil
+		for i=1, #RDX.TimeoutCallbacks, 1 do
+			if RDX.TimeoutCallbacks[i] then
+				if currTime >= RDX.TimeoutCallbacks[i].time then
+					RDX.TimeoutCallbacks[i].cb()
+					RDX.TimeoutCallbacks[i] = nil
 				end
 			end
 		end

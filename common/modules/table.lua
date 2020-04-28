@@ -1,7 +1,7 @@
-ESX.Table = {}
+RDX.Table = {}
 
 -- nil proof alternative to #table
-function ESX.Table.SizeOf(t)
+function RDX.Table.SizeOf(t)
 	local count = 0
 
 	for _,_ in pairs(t) do
@@ -11,13 +11,13 @@ function ESX.Table.SizeOf(t)
 	return count
 end
 
-function ESX.Table.Set(t)
+function RDX.Table.Set(t)
 	local set = {}
 	for k,v in ipairs(t) do set[v] = true end
 	return set
 end
 
-function ESX.Table.IndexOf(t, value)
+function RDX.Table.IndexOf(t, value)
 	for i=1, #t, 1 do
 		if t[i] == value then
 			return i
@@ -27,7 +27,7 @@ function ESX.Table.IndexOf(t, value)
 	return -1
 end
 
-function ESX.Table.LastIndexOf(t, value)
+function RDX.Table.LastIndexOf(t, value)
 	for i=#t, 1, -1 do
 		if t[i] == value then
 			return i
@@ -37,7 +37,7 @@ function ESX.Table.LastIndexOf(t, value)
 	return -1
 end
 
-function ESX.Table.Find(t, cb)
+function RDX.Table.Find(t, cb)
 	for i=1, #t, 1 do
 		if cb(t[i]) then
 			return t[i]
@@ -47,7 +47,7 @@ function ESX.Table.Find(t, cb)
 	return nil
 end
 
-function ESX.Table.FindIndex(t, cb)
+function RDX.Table.FindIndex(t, cb)
 	for i=1, #t, 1 do
 		if cb(t[i]) then
 			return i
@@ -57,7 +57,7 @@ function ESX.Table.FindIndex(t, cb)
 	return -1
 end
 
-function ESX.Table.Filter(t, cb)
+function RDX.Table.Filter(t, cb)
 	local newTable = {}
 
 	for i=1, #t, 1 do
@@ -69,7 +69,7 @@ function ESX.Table.Filter(t, cb)
 	return newTable
 end
 
-function ESX.Table.Map(t, cb)
+function RDX.Table.Map(t, cb)
 	local newTable = {}
 
 	for i=1, #t, 1 do
@@ -79,7 +79,7 @@ function ESX.Table.Map(t, cb)
 	return newTable
 end
 
-function ESX.Table.Reverse(t)
+function RDX.Table.Reverse(t)
 	local newTable = {}
 
 	for i=#t, 1, -1 do
@@ -89,7 +89,7 @@ function ESX.Table.Reverse(t)
 	return newTable
 end
 
-function ESX.Table.Clone(t)
+function RDX.Table.Clone(t)
 	if type(t) ~= 'table' then return t end
 
 	local meta = getmetatable(t)
@@ -97,7 +97,7 @@ function ESX.Table.Clone(t)
 
 	for k,v in pairs(t) do
 		if type(v) == 'table' then
-			target[k] = ESX.Table.Clone(v)
+			target[k] = RDX.Table.Clone(v)
 		else
 			target[k] = v
 		end
@@ -108,8 +108,8 @@ function ESX.Table.Clone(t)
 	return target
 end
 
-function ESX.Table.Concat(t1, t2)
-	local t3 = ESX.Table.Clone(t1)
+function RDX.Table.Concat(t1, t2)
+	local t3 = RDX.Table.Clone(t1)
 
 	for i=1, #t2, 1 do
 		table.insert(t3, t2[i])
@@ -118,7 +118,7 @@ function ESX.Table.Concat(t1, t2)
 	return t3
 end
 
-function ESX.Table.Join(t, sep)
+function RDX.Table.Join(t, sep)
 	local sep = sep or ','
 	local str = ''
 
@@ -135,7 +135,7 @@ end
 
 -- Credit: https://stackoverflow.com/a/15706820
 -- Description: sort function for pairs
-function ESX.Table.Sort(t, order)
+function RDX.Table.Sort(t, order)
 	-- collect the keys
 	local keys = {}
 

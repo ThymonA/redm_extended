@@ -5,16 +5,16 @@ Citizen.CreateThread(function()
 		Citizen.Wait(0)
 
 		if NetworkIsPlayerActive(PlayerId()) then
-			TriggerServerEvent('esx:onPlayerJoined')
+			TriggerServerEvent('rdx:onPlayerJoined')
 			break
 		end
 	end
 end)
 
-RegisterNetEvent('esx:playerLoaded')
-AddEventHandler('esx:playerLoaded', function(playerData)
-	ESX.PlayerLoaded = true
-	ESX.PlayerData = playerData
+RegisterNetEvent('rdx:playerLoaded')
+AddEventHandler('rdx:playerLoaded', function(playerData)
+	RDX.PlayerLoaded = true
+	RDX.PlayerData = playerData
 
 	-- check if player is coming from loading screen
 	if GetEntityModel(PlayerPedId()) == GetHashKey('PLAYER_ZERO') then
@@ -35,7 +35,6 @@ AddEventHandler('esx:playerLoaded', function(playerData)
 	FreezeEntityPosition(PlayerPedId(), true)
 
 	-- enable PVP
-	SetCanAttackFriendly(PlayerPedId(), true, false)
 	NetworkSetFriendlyFireOption(true)
 
 	-- disable wanted level
@@ -45,7 +44,7 @@ AddEventHandler('esx:playerLoaded', function(playerData)
 	if Config.EnableHud then
 		for k,v in ipairs(playerData.accounts) do
 			local accountTpl = '<div><img src="img/accounts/' .. v.name .. '.png"/>&nbsp;{{money}}</div>'
-			ESX.UI.HUD.RegisterElement('account_' .. v.name, k, 0, accountTpl, {money = ESX.Math.GroupDigits(v.money)})
+			RDX.UI.HUD.RegisterElement('account_' .. v.name, k, 0, accountTpl, {money = RDX.Math.GroupDigits(v.money)})
 		end
 
 		local jobTpl = '<div>{{job_label}} - {{grade_label}}</div>'
@@ -54,22 +53,22 @@ AddEventHandler('esx:playerLoaded', function(playerData)
 			jobTpl = '<div>{{job_label}}</div>'
 		end
 
-		ESX.UI.HUD.RegisterElement('job', #playerData.accounts, 0, jobTpl, {
+		RDX.UI.HUD.RegisterElement('job', #playerData.accounts, 0, jobTpl, {
 			job_label = playerData.job.label,
 			grade_label = playerData.job.grade_label
 		})
 	end
 
-	ESX.Game.Teleport(PlayerPedId(), {
+	RDX.Game.Teleport(PlayerPedId(), {
 		x = playerData.coords.x,
 		y = playerData.coords.y,
 		z = playerData.coords.z + 0.25,
 		heading = playerData.coords.heading
 	}, function()
-		TriggerServerEvent('esx:onPlayerSpawn')
-		TriggerEvent('esx:onPlayerSpawn')
+		TriggerServerEvent('rdx:onPlayerSpawn')
+		TriggerEvent('rdx:onPlayerSpawn')
 		TriggerEvent('playerSpawned') -- compatibility with old scripts, will be removed soon
-		TriggerEvent('esx:restoreLoadout')
+		TriggerEvent('rdx:restoreLoadout')
 
 		Citizen.Wait(3000)
 		ShutdownLoadingScreen()
@@ -79,26 +78,26 @@ AddEventHandler('esx:playerLoaded', function(playerData)
 	end)
 end)
 
-RegisterNetEvent('esx:setMaxWeight')
-AddEventHandler('esx:setMaxWeight', function(newMaxWeight) ESX.PlayerData.maxWeight = newMaxWeight end)
+RegisterNetEvent('rdx:setMaxWeight')
+AddEventHandler('rdx:setMaxWeight', function(newMaxWeight) RDX.PlayerData.maxWeight = newMaxWeight end)
 
-AddEventHandler('esx:onPlayerSpawn', function() isDead = false end)
-AddEventHandler('esx:onPlayerDeath', function() isDead = true end)
+AddEventHandler('rdx:onPlayerSpawn', function() isDead = false end)
+AddEventHandler('rdx:onPlayerDeath', function() isDead = true end)
 
 AddEventHandler('skinchanger:modelLoaded', function()
-	while not ESX.PlayerLoaded do
+	while not RDX.PlayerLoaded do
 		Citizen.Wait(100)
 	end
 
-	TriggerEvent('esx:restoreLoadout')
+	TriggerEvent('rdx:restoreLoadout')
 end)
 
-AddEventHandler('esx:restoreLoadout', function()
+AddEventHandler('rdx:restoreLoadout', function()
 	local playerPed = PlayerPedId()
 	local ammoTypes = {}
 	RemoveAllPedWeapons(playerPed, true)
 
-	for k,v in ipairs(ESX.PlayerData.loadout) do
+	for k,v in ipairs(RDX.PlayerData.loadout) do
 		local weaponName = v.name
 		local weaponHash = GetHashKey(weaponName)
 
@@ -108,7 +107,7 @@ AddEventHandler('esx:restoreLoadout', function()
 		local ammoType = GetPedAmmoTypeFromWeapon(playerPed, weaponHash)
 
 		for k2,v2 in ipairs(v.components) do
-			local componentHash = ESX.GetWeaponComponent(weaponName, v2).hash
+			local componentHash = RDX.GetWeaponComponent(weaponName, v2).hash
 			GiveWeaponComponentToPed(playerPed, weaponHash, componentHash)
 		end
 
@@ -119,100 +118,100 @@ AddEventHandler('esx:restoreLoadout', function()
 	end
 end)
 
-RegisterNetEvent('esx:setAccountMoney')
-AddEventHandler('esx:setAccountMoney', function(account)
-	for k,v in ipairs(ESX.PlayerData.accounts) do
+RegisterNetEvent('rdx:setAccountMoney')
+AddEventHandler('rdx:setAccountMoney', function(account)
+	for k,v in ipairs(RDX.PlayerData.accounts) do
 		if v.name == account.name then
-			ESX.PlayerData.accounts[k] = account
+			RDX.PlayerData.accounts[k] = account
 			break
 		end
 	end
 
 	if Config.EnableHud then
-		ESX.UI.HUD.UpdateElement('account_' .. account.name, {
-			money = ESX.Math.GroupDigits(account.money)
+		RDX.UI.HUD.UpdateElement('account_' .. account.name, {
+			money = RDX.Math.GroupDigits(account.money)
 		})
 	end
 end)
 
-RegisterNetEvent('esx:addInventoryItem')
-AddEventHandler('esx:addInventoryItem', function(item, count, showNotification)
-	for k,v in ipairs(ESX.PlayerData.inventory) do
+RegisterNetEvent('rdx:addInventoryItem')
+AddEventHandler('rdx:addInventoryItem', function(item, count, showNotification)
+	for k,v in ipairs(RDX.PlayerData.inventory) do
 		if v.name == item then
-			ESX.UI.ShowInventoryItemNotification(true, v.label, count - v.count)
-			ESX.PlayerData.inventory[k].count = count
+			RDX.UI.ShowInventoryItemNotification(true, v.label, count - v.count)
+			RDX.PlayerData.inventory[k].count = count
 			break
 		end
 	end
 
 	if showNotification then
-		ESX.UI.ShowInventoryItemNotification(true, item, count)
+		RDX.UI.ShowInventoryItemNotification(true, item, count)
 	end
 
-	if ESX.UI.Menu.IsOpen('default', 'es_extended', 'inventory') then
-		ESX.ShowInventory()
+	if RDX.UI.Menu.IsOpen('default', 'redm_extended', 'inventory') then
+		RDX.ShowInventory()
 	end
 end)
 
-RegisterNetEvent('esx:removeInventoryItem')
-AddEventHandler('esx:removeInventoryItem', function(item, count, showNotification)
-	for k,v in ipairs(ESX.PlayerData.inventory) do
+RegisterNetEvent('rdx:removeInventoryItem')
+AddEventHandler('rdx:removeInventoryItem', function(item, count, showNotification)
+	for k,v in ipairs(RDX.PlayerData.inventory) do
 		if v.name == item then
-			ESX.UI.ShowInventoryItemNotification(false, v.label, v.count - count)
-			ESX.PlayerData.inventory[k].count = count
+			RDX.UI.ShowInventoryItemNotification(false, v.label, v.count - count)
+			RDX.PlayerData.inventory[k].count = count
 			break
 		end
 	end
 
 	if showNotification then
-		ESX.UI.ShowInventoryItemNotification(false, item, count)
+		RDX.UI.ShowInventoryItemNotification(false, item, count)
 	end
 
-	if ESX.UI.Menu.IsOpen('default', 'es_extended', 'inventory') then
-		ESX.ShowInventory()
+	if RDX.UI.Menu.IsOpen('default', 'redm_extended', 'inventory') then
+		RDX.ShowInventory()
 	end
 end)
 
-RegisterNetEvent('esx:setJob')
-AddEventHandler('esx:setJob', function(job)
-	ESX.PlayerData.job = job
+RegisterNetEvent('rdx:setJob')
+AddEventHandler('rdx:setJob', function(job)
+	RDX.PlayerData.job = job
 end)
 
-RegisterNetEvent('esx:addWeapon')
-AddEventHandler('esx:addWeapon', function(weaponName, ammo)
+RegisterNetEvent('rdx:addWeapon')
+AddEventHandler('rdx:addWeapon', function(weaponName, ammo)
 	local playerPed = PlayerPedId()
 	local weaponHash = GetHashKey(weaponName)
 
 	GiveWeaponToPed(playerPed, weaponHash, ammo, false, false)
 end)
 
-RegisterNetEvent('esx:addWeaponComponent')
-AddEventHandler('esx:addWeaponComponent', function(weaponName, weaponComponent)
+RegisterNetEvent('rdx:addWeaponComponent')
+AddEventHandler('rdx:addWeaponComponent', function(weaponName, weaponComponent)
 	local playerPed = PlayerPedId()
 	local weaponHash = GetHashKey(weaponName)
-	local componentHash = ESX.GetWeaponComponent(weaponName, weaponComponent).hash
+	local componentHash = RDX.GetWeaponComponent(weaponName, weaponComponent).hash
 
 	GiveWeaponComponentToPed(playerPed, weaponHash, componentHash)
 end)
 
-RegisterNetEvent('esx:setWeaponAmmo')
-AddEventHandler('esx:setWeaponAmmo', function(weaponName, weaponAmmo)
+RegisterNetEvent('rdx:setWeaponAmmo')
+AddEventHandler('rdx:setWeaponAmmo', function(weaponName, weaponAmmo)
 	local playerPed = PlayerPedId()
 	local weaponHash = GetHashKey(weaponName)
 
 	SetPedAmmo(playerPed, weaponHash, weaponAmmo)
 end)
 
-RegisterNetEvent('esx:setWeaponTint')
-AddEventHandler('esx:setWeaponTint', function(weaponName, weaponTintIndex)
+RegisterNetEvent('rdx:setWeaponTint')
+AddEventHandler('rdx:setWeaponTint', function(weaponName, weaponTintIndex)
 	local playerPed = PlayerPedId()
 	local weaponHash = GetHashKey(weaponName)
 
 	SetPedWeaponTintIndex(playerPed, weaponHash, weaponTintIndex)
 end)
 
-RegisterNetEvent('esx:removeWeapon')
-AddEventHandler('esx:removeWeapon', function(weaponName)
+RegisterNetEvent('rdx:removeWeapon')
+AddEventHandler('rdx:removeWeapon', function(weaponName)
 	local playerPed = PlayerPedId()
 	local weaponHash = GetHashKey(weaponName)
 
@@ -220,17 +219,17 @@ AddEventHandler('esx:removeWeapon', function(weaponName)
 	SetPedAmmo(playerPed, weaponHash, 0) -- remove leftover ammo
 end)
 
-RegisterNetEvent('esx:removeWeaponComponent')
-AddEventHandler('esx:removeWeaponComponent', function(weaponName, weaponComponent)
+RegisterNetEvent('rdx:removeWeaponComponent')
+AddEventHandler('rdx:removeWeaponComponent', function(weaponName, weaponComponent)
 	local playerPed = PlayerPedId()
 	local weaponHash = GetHashKey(weaponName)
-	local componentHash = ESX.GetWeaponComponent(weaponName, weaponComponent).hash
+	local componentHash = RDX.GetWeaponComponent(weaponName, weaponComponent).hash
 
 	RemoveWeaponComponentFromPed(playerPed, weaponHash, componentHash)
 end)
 
-RegisterNetEvent('esx:teleport')
-AddEventHandler('esx:teleport', function(coords)
+RegisterNetEvent('rdx:teleport')
+AddEventHandler('rdx:teleport', function(coords)
 	local playerPed = PlayerPedId()
 
 	-- ensure decmial number
@@ -238,28 +237,28 @@ AddEventHandler('esx:teleport', function(coords)
 	coords.y = coords.y + 0.0
 	coords.z = coords.z + 0.0
 
-	ESX.Game.Teleport(playerPed, coords)
+	RDX.Game.Teleport(playerPed, coords)
 end)
 
-RegisterNetEvent('esx:setJob')
-AddEventHandler('esx:setJob', function(job)
+RegisterNetEvent('rdx:setJob')
+AddEventHandler('rdx:setJob', function(job)
 	if Config.EnableHud then
-		ESX.UI.HUD.UpdateElement('job', {
+		RDX.UI.HUD.UpdateElement('job', {
 			job_label = job.label,
 			grade_label = job.grade_label
 		})
 	end
 end)
 
-RegisterNetEvent('esx:spawnVehicle')
-AddEventHandler('esx:spawnVehicle', function(vehicleName)
+RegisterNetEvent('rdx:spawnVehicle')
+AddEventHandler('rdx:spawnVehicle', function(vehicleName)
 	local model = (type(vehicleName) == 'number' and vehicleName or GetHashKey(vehicleName))
 
 	if IsModelInCdimage(model) then
 		local playerPed = PlayerPedId()
 		local playerCoords, playerHeading = GetEntityCoords(playerPed), GetEntityHeading(playerPed)
 
-		ESX.Game.SpawnVehicle(model, playerCoords, playerHeading, function(vehicle)
+		RDX.Game.SpawnVehicle(model, playerCoords, playerHeading, function(vehicle)
 			TaskWarpPedIntoVehicle(playerPed, vehicle, -1)
 		end)
 	else
@@ -267,8 +266,8 @@ AddEventHandler('esx:spawnVehicle', function(vehicleName)
 	end
 end)
 
-RegisterNetEvent('esx:createPickup')
-AddEventHandler('esx:createPickup', function(pickupId, label, coords, type, name, components, tintIndex)
+RegisterNetEvent('rdx:createPickup')
+AddEventHandler('rdx:createPickup', function(pickupId, label, coords, type, name, components, tintIndex)
 	local function setObjectProperties(object)
 		SetEntityAsMissionEntity(object, true, false)
 		PlaceObjectOnGroundProperly(object)
@@ -285,30 +284,30 @@ AddEventHandler('esx:createPickup', function(pickupId, label, coords, type, name
 
 	if type == 'item_weapon' then
 		local weaponHash = GetHashKey(name)
-		ESX.Streaming.RequestWeaponAsset(weaponHash)
+		RDX.Streaming.RequestWeaponAsset(weaponHash)
 		local pickupObject = CreateWeaponObject(weaponHash, 50, coords.x, coords.y, coords.z, true, 1.0, 0)
 		SetWeaponObjectTintIndex(pickupObject, tintIndex)
 
 		for k,v in ipairs(components) do
-			local component = ESX.GetWeaponComponent(name, v)
+			local component = RDX.GetWeaponComponent(name, v)
 			GiveWeaponComponentToWeaponObject(pickupObject, component.hash)
 		end
 
 		setObjectProperties(pickupObject)
 	else
-		ESX.Game.SpawnLocalObject('prop_money_bag_01', coords, setObjectProperties)
+		RDX.Game.SpawnLocalObject('prop_money_bag_01', coords, setObjectProperties)
 	end
 end)
 
-RegisterNetEvent('esx:createMissingPickups')
-AddEventHandler('esx:createMissingPickups', function(missingPickups)
+RegisterNetEvent('rdx:createMissingPickups')
+AddEventHandler('rdx:createMissingPickups', function(missingPickups)
 	for pickupId,pickup in pairs(missingPickups) do
-		TriggerEvent('esx:createPickup', pickupId, pickup.label, pickup.coords, pickup.type, pickup.name, pickup.components, pickup.tintIndex)
+		TriggerEvent('rdx:createPickup', pickupId, pickup.label, pickup.coords, pickup.type, pickup.name, pickup.components, pickup.tintIndex)
 	end
 end)
 
-RegisterNetEvent('esx:registerSuggestions')
-AddEventHandler('esx:registerSuggestions', function(registeredCommands)
+RegisterNetEvent('rdx:registerSuggestions')
+AddEventHandler('rdx:registerSuggestions', function(registeredCommands)
 	for name,command in pairs(registeredCommands) do
 		if command.suggestion then
 			TriggerEvent('chat:addSuggestion', ('/%s'):format(name), command.suggestion.help, command.suggestion.arguments)
@@ -316,51 +315,31 @@ AddEventHandler('esx:registerSuggestions', function(registeredCommands)
 	end
 end)
 
-RegisterNetEvent('esx:removePickup')
-AddEventHandler('esx:removePickup', function(pickupId)
+RegisterNetEvent('rdx:removePickup')
+AddEventHandler('rdx:removePickup', function(pickupId)
 	if pickups[pickupId] and pickups[pickupId].obj then
-		ESX.Game.DeleteObject(pickups[pickupId].obj)
+		RDX.Game.DeleteObject(pickups[pickupId].obj)
 		pickups[pickupId] = nil
 	end
 end)
 
-RegisterNetEvent('esx:deleteVehicle')
-AddEventHandler('esx:deleteVehicle', function(radius)
+RegisterNetEvent('rdx:deleteVehicle')
+AddEventHandler('rdx:deleteVehicle', function()
 	local playerPed = PlayerPedId()
+	local vehicle, attempt = RDX.Game.GetVehicleInDirection(), 0
 
-	if radius and tonumber(radius) then
-		radius = tonumber(radius) + 0.01
-		local vehicles = ESX.Game.GetVehiclesInArea(GetEntityCoords(playerPed), radius)
+	if IsPedInAnyVehicle(playerPed, true) then
+		vehicle = GetVehiclePedIsIn(playerPed, false)
+	end
 
-		for k,entity in ipairs(vehicles) do
-			local attempt = 0
+	while not NetworkHasControlOfEntity(vehicle) and attempt < 100 and DoesEntityExist(vehicle) do
+		Citizen.Wait(100)
+		NetworkRequestControlOfEntity(vehicle)
+		attempt = attempt + 1
+	end
 
-			while not NetworkHasControlOfEntity(entity) and attempt < 100 and DoesEntityExist(entity) do
-				Citizen.Wait(100)
-				NetworkRequestControlOfEntity(entity)
-				attempt = attempt + 1
-			end
-
-			if DoesEntityExist(entity) and NetworkHasControlOfEntity(entity) then
-				ESX.Game.DeleteVehicle(entity)
-			end
-		end
-	else
-		local vehicle, attempt = ESX.Game.GetVehicleInDirection(), 0
-
-		if IsPedInAnyVehicle(playerPed, true) then
-			vehicle = GetVehiclePedIsIn(playerPed, false)
-		end
-
-		while not NetworkHasControlOfEntity(vehicle) and attempt < 100 and DoesEntityExist(vehicle) do
-			Citizen.Wait(100)
-			NetworkRequestControlOfEntity(vehicle)
-			attempt = attempt + 1
-		end
-
-		if DoesEntityExist(vehicle) and NetworkHasControlOfEntity(vehicle) then
-			ESX.Game.DeleteVehicle(vehicle)
-		end
+	if DoesEntityExist(vehicle) and NetworkHasControlOfEntity(vehicle) then
+		RDX.Game.DeleteVehicle(vehicle)
 	end
 end)
 
@@ -372,10 +351,10 @@ if Config.EnableHud then
 
 			if IsPauseMenuActive() and not isPaused then
 				isPaused = true
-				ESX.UI.HUD.SetDisplay(0.0)
+				RDX.UI.HUD.SetDisplay(0.0)
 			elseif not IsPauseMenuActive() and isPaused then
 				isPaused = false
-				ESX.UI.HUD.SetDisplay(1.0)
+				RDX.UI.HUD.SetDisplay(1.0)
 			end
 		end
 	end)
@@ -394,11 +373,11 @@ function StartServerSyncLoops()
 
 				if IsPedShooting(playerPed) then
 					local _,weaponHash = GetCurrentPedWeapon(playerPed, true)
-					local weapon = ESX.GetWeaponFromHash(weaponHash)
+					local weapon = RDX.GetWeaponFromHash(weaponHash)
 
 					if weapon then
 						local ammoCount = GetAmmoInPedWeapon(playerPed, weaponHash)
-						TriggerServerEvent('esx:updateWeaponAmmo', weapon.name, ammoCount)
+						TriggerServerEvent('rdx:updateWeaponAmmo', weapon.name, ammoCount)
 					end
 				end
 			end
@@ -407,7 +386,7 @@ function StartServerSyncLoops()
 
 	-- sync current player coords with server
 	Citizen.CreateThread(function()
-		local previousCoords = vector3(ESX.PlayerData.coords.x, ESX.PlayerData.coords.y, ESX.PlayerData.coords.z)
+		local previousCoords = vector3(RDX.PlayerData.coords.x, RDX.PlayerData.coords.y, RDX.PlayerData.coords.z)
 
 		while true do
 			Citizen.Wait(1000)
@@ -419,9 +398,9 @@ function StartServerSyncLoops()
 
 				if distance > 1 then
 					previousCoords = playerCoords
-					local playerHeading = ESX.Math.Round(GetEntityHeading(playerPed), 1)
-					local formattedCoords = {x = ESX.Math.Round(playerCoords.x, 1), y = ESX.Math.Round(playerCoords.y, 1), z = ESX.Math.Round(playerCoords.z, 1), heading = playerHeading}
-					TriggerServerEvent('esx:updateCoords', formattedCoords)
+					local playerHeading = RDX.Math.Round(GetEntityHeading(playerPed), 1)
+					local formattedCoords = {x = RDX.Math.Round(playerCoords.x, 1), y = RDX.Math.Round(playerCoords.y, 1), z = RDX.Math.Round(playerCoords.z, 1), heading = playerHeading}
+					TriggerServerEvent('rdx:updateCoords', formattedCoords)
 				end
 			end
 		end
@@ -433,8 +412,8 @@ Citizen.CreateThread(function()
 		Citizen.Wait(0)
 
 		if IsControlJustReleased(0, 289) then
-			if IsInputDisabled(0) and not isDead and not ESX.UI.Menu.IsOpen('default', 'es_extended', 'inventory') then
-				ESX.ShowInventory()
+			if IsInputDisabled(0) and not isDead and not RDX.UI.Menu.IsOpen('default', 'redm_extended', 'inventory') then
+				RDX.ShowInventory()
 			end
 		end
 	end
@@ -446,7 +425,7 @@ Citizen.CreateThread(function()
 		Citizen.Wait(0)
 		local playerPed = PlayerPedId()
 		local playerCoords, letSleep = GetEntityCoords(playerPed), true
-		local closestPlayer, closestDistance = ESX.Game.GetClosestPlayer(playerCoords)
+		local closestPlayer, closestDistance = RDX.Game.GetClosestPlayer(playerCoords)
 
 		for pickupId,pickup in pairs(pickups) do
 			local distance = #(playerCoords - pickup.coords)
@@ -461,11 +440,11 @@ Citizen.CreateThread(function()
 							pickup.inRange = true
 
 							local dict, anim = 'weapons@first_person@aim_rng@generic@projectile@sticky_bomb@', 'plant_floor'
-							ESX.Streaming.RequestAnimDict(dict)
+							RDX.Streaming.RequestAnimDict(dict)
 							TaskPlayAnim(playerPed, dict, anim, 8.0, 1.0, 1000, 16, 0.0, false, false, false)
 							Citizen.Wait(1000)
 
-							TriggerServerEvent('esx:onPickup', pickupId)
+							TriggerServerEvent('rdx:onPickup', pickupId)
 							PlaySoundFrontend(-1, 'PICK_UP', 'HUD_FRONTEND_DEFAULT_SOUNDSET', false)
 						end
 					end
@@ -473,7 +452,7 @@ Citizen.CreateThread(function()
 					label = ('%s~n~%s'):format(label, _U('threw_pickup_prompt'))
 				end
 
-				ESX.Game.Utils.DrawText3D({
+				RDX.Game.Utils.DrawText3D({
 					x = pickup.coords.x,
 					y = pickup.coords.y,
 					z = pickup.coords.z + 0.25

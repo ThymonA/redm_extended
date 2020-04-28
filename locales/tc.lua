@@ -57,7 +57,6 @@ Locales['tc'] = {
   ['command_car'] = '生成載具',
   ['command_car_car'] = '生成載具的模型名稱或希哈值',
   ['command_cardel'] = '刪除附近的載具',
-  ['command_cardel_radius'] = '可選擇，刪除指定半徑內的所有車輛',
   ['command_clear'] = '清除聊天紀錄',
   ['command_clearall'] = '清除所有玩家的聊天紀錄',
   ['command_clearinventory'] = '清除玩家背包',

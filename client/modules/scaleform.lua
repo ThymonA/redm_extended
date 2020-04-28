@@ -1,5 +1,5 @@
-ESX.Scaleform.ShowFreemodeMessage = function(title, msg, sec)
-	local scaleform = ESX.Scaleform.Utils.RequestScaleformMovie('MP_BIG_MESSAGE_FREEMODE')
+RDX.Scaleform.ShowFreemodeMessage = function(title, msg, sec)
+	local scaleform = RDX.Scaleform.Utils.RequestScaleformMovie('MP_BIG_MESSAGE_FREEMODE')
 
 	BeginScaleformMovieMethod(scaleform, 'SHOW_SHARD_WASTED_MP_MESSAGE')
 	PushScaleformMovieMethodParameterString(title)
@@ -16,8 +16,8 @@ ESX.Scaleform.ShowFreemodeMessage = function(title, msg, sec)
 	SetScaleformMovieAsNoLongerNeeded(scaleform)
 end
 
-ESX.Scaleform.ShowBreakingNews = function(title, msg, bottom, sec)
-	local scaleform = ESX.Scaleform.Utils.RequestScaleformMovie('BREAKING_NEWS')
+RDX.Scaleform.ShowBreakingNews = function(title, msg, bottom, sec)
+	local scaleform = RDX.Scaleform.Utils.RequestScaleformMovie('BREAKING_NEWS')
 
 	BeginScaleformMovieMethod(scaleform, 'SET_TEXT')
 	PushScaleformMovieMethodParameterString(msg)
@@ -47,8 +47,8 @@ ESX.Scaleform.ShowBreakingNews = function(title, msg, bottom, sec)
 	SetScaleformMovieAsNoLongerNeeded(scaleform)
 end
 
-ESX.Scaleform.ShowPopupWarning = function(title, msg, bottom, sec)
-	local scaleform = ESX.Scaleform.Utils.RequestScaleformMovie('POPUP_WARNING')
+RDX.Scaleform.ShowPopupWarning = function(title, msg, bottom, sec)
+	local scaleform = RDX.Scaleform.Utils.RequestScaleformMovie('POPUP_WARNING')
 
 	BeginScaleformMovieMethod(scaleform, 'SHOW_POPUP_WARNING')
 
@@ -70,8 +70,8 @@ ESX.Scaleform.ShowPopupWarning = function(title, msg, bottom, sec)
 	SetScaleformMovieAsNoLongerNeeded(scaleform)
 end
 
-ESX.Scaleform.ShowTrafficMovie = function(sec)
-	local scaleform = ESX.Scaleform.Utils.RequestScaleformMovie('TRAFFIC_CAM')
+RDX.Scaleform.ShowTrafficMovie = function(sec)
+	local scaleform = RDX.Scaleform.Utils.RequestScaleformMovie('TRAFFIC_CAM')
 
 	BeginScaleformMovieMethod(scaleform, 'PLAY_CAM_MOVIE')
 
@@ -87,7 +87,7 @@ ESX.Scaleform.ShowTrafficMovie = function(sec)
 	SetScaleformMovieAsNoLongerNeeded(scaleform)
 end
 
-ESX.Scaleform.Utils.RequestScaleformMovie = function(movie)
+RDX.Scaleform.Utils.RequestScaleformMovie = function(movie)
 	local scaleform = RequestScaleformMovie(movie)
 
 	while not HasScaleformMovieLoaded(scaleform) do

@@ -1,38 +1,38 @@
-ESX.Trace = function(msg)
+RDX.Trace = function(msg)
 	if Config.EnableDebug then
-		print(('[es_extended] [^2TRACE^7] %s^7'):format(msg))
+		print(('[redm_extended] [^2TRACE^7] %s^7'):format(msg))
 	end
 end
 
-ESX.SetTimeout = function(msec, cb)
-	local id = ESX.TimeoutCount + 1
+RDX.SetTimeout = function(msec, cb)
+	local id = RDX.TimeoutCount + 1
 
 	SetTimeout(msec, function()
-		if ESX.CancelledTimeouts[id] then
-			ESX.CancelledTimeouts[id] = nil
+		if RDX.CancelledTimeouts[id] then
+			RDX.CancelledTimeouts[id] = nil
 		else
 			cb()
 		end
 	end)
 
-	ESX.TimeoutCount = id
+	RDX.TimeoutCount = id
 
 	return id
 end
 
-ESX.RegisterCommand = function(name, group, cb, allowConsole, suggestion)
+RDX.RegisterCommand = function(name, group, cb, allowConsole, suggestion)
 	if type(name) == 'table' then
 		for k,v in ipairs(name) do
-			ESX.RegisterCommand(v, group, cb, allowConsole, suggestion)
+			RDX.RegisterCommand(v, group, cb, allowConsole, suggestion)
 		end
 
 		return
 	end
 
-	if ESX.RegisteredCommands[name] then
-		print(('[es_extended] [^3WARNING^7] An command "%s" is already registered, overriding command'):format(name))
+	if RDX.RegisteredCommands[name] then
+		print(('[redm_extended] [^3WARNING^7] An command "%s" is already registered, overriding command'):format(name))
 
-		if ESX.RegisteredCommands[name].suggestion then
+		if RDX.RegisteredCommands[name].suggestion then
 			TriggerClientEvent('chat:removeSuggestion', -1, ('/%s'):format(name))
 		end
 	end
@@ -44,15 +44,15 @@ ESX.RegisterCommand = function(name, group, cb, allowConsole, suggestion)
 		TriggerClientEvent('chat:addSuggestion', -1, ('/%s'):format(name), suggestion.help, suggestion.arguments)
 	end
 
-	ESX.RegisteredCommands[name] = {group = group, cb = cb, allowConsole = allowConsole, suggestion = suggestion}
+	RDX.RegisteredCommands[name] = {group = group, cb = cb, allowConsole = allowConsole, suggestion = suggestion}
 
 	RegisterCommand(name, function(playerId, args, rawCommand)
-		local command = ESX.RegisteredCommands[name]
+		local command = RDX.RegisteredCommands[name]
 
 		if not command.allowConsole and playerId == 0 then
-			print(('[es_extended] [^3WARNING^7] %s'):format(_U('commanderror_console')))
+			print(('[redm_extended] [^3WARNING^7] %s'):format(_U('commanderror_console')))
 		else
-			local xPlayer, error = ESX.GetPlayerFromId(playerId), nil
+			local xPlayer, error = RDX.GetPlayerFromId(playerId), nil
 
 			if command.suggestion then
 				if command.suggestion.validate then
@@ -80,7 +80,7 @@ ESX.RegisterCommand = function(name, group, cb, allowConsole, suggestion)
 								if args[k] == 'me' then targetPlayer = playerId end
 
 								if targetPlayer then
-									local xTargetPlayer = ESX.GetPlayerFromId(targetPlayer)
+									local xTargetPlayer = RDX.GetPlayerFromId(targetPlayer)
 
 									if xTargetPlayer then
 										if v.type == 'player' then
@@ -97,13 +97,13 @@ ESX.RegisterCommand = function(name, group, cb, allowConsole, suggestion)
 							elseif v.type == 'string' then
 								newArgs[v.name] = args[k]
 							elseif v.type == 'item' then
-								if ESX.Items[args[k]] then
+								if RDX.Items[args[k]] then
 									newArgs[v.name] = args[k]
 								else
 									error = _U('commanderror_invaliditem')
 								end
 							elseif v.type == 'weapon' then
-								if ESX.GetWeapon(args[k]) then
+								if RDX.GetWeapon(args[k]) then
 									newArgs[v.name] = string.upper(args[k])
 								else
 									error = _U('commanderror_invalidweapon')
@@ -122,14 +122,14 @@ ESX.RegisterCommand = function(name, group, cb, allowConsole, suggestion)
 
 			if error then
 				if playerId == 0 then
-					print(('[es_extended] [^3WARNING^7] %s^7'):format(error))
+					print(('[redm_extended] [^3WARNING^7] %s^7'):format(error))
 				else
 					xPlayer.triggerEvent('chat:addMessage', {args = {'^1SYSTEM', error}})
 				end
 			else
 				cb(xPlayer or false, args, function(msg)
 					if playerId == 0 then
-						print(('[es_extended] [^3WARNING^7] %s^7'):format(msg))
+						print(('[redm_extended] [^3WARNING^7] %s^7'):format(msg))
 					else
 						xPlayer.triggerEvent('chat:addMessage', {args = {'^1SYSTEM', msg}})
 					end
@@ -147,23 +147,23 @@ ESX.RegisterCommand = function(name, group, cb, allowConsole, suggestion)
 	end
 end
 
-ESX.ClearTimeout = function(id)
-	ESX.CancelledTimeouts[id] = true
+RDX.ClearTimeout = function(id)
+	RDX.CancelledTimeouts[id] = true
 end
 
-ESX.RegisterServerCallback = function(name, cb)
-	ESX.ServerCallbacks[name] = cb
+RDX.RegisterServerCallback = function(name, cb)
+	RDX.ServerCallbacks[name] = cb
 end
 
-ESX.TriggerServerCallback = function(name, requestId, source, cb, ...)
-	if ESX.ServerCallbacks[name] then
-		ESX.ServerCallbacks[name](source, cb, ...)
+RDX.TriggerServerCallback = function(name, requestId, source, cb, ...)
+	if RDX.ServerCallbacks[name] then
+		RDX.ServerCallbacks[name](source, cb, ...)
 	else
-		print(('[es_extended] [^3WARNING^7] Server callback "%s" does not exist. Make sure that the server sided file really is loading, an error in that file might cause it to not load.'):format(name))
+		print(('[redm_extended] [^3WARNING^7] Server callback "%s" does not exist. Make sure that the server sided file really is loading, an error in that file might cause it to not load.'):format(name))
 	end
 end
 
-ESX.SavePlayer = function(xPlayer, cb)
+RDX.SavePlayer = function(xPlayer, cb)
 	local asyncTasks = {}
 
 	table.insert(asyncTasks, function(cb2)
@@ -182,7 +182,7 @@ ESX.SavePlayer = function(xPlayer, cb)
 	end)
 
 	Async.parallel(asyncTasks, function(results)
-		print(('[es_extended] [^2INFO^7] Saved player "%s^7"'):format(xPlayer.getName()))
+		print(('[redm_extended] [^2INFO^7] Saved player "%s^7"'):format(xPlayer.getName()))
 
 		if cb then
 			cb()
@@ -190,97 +190,105 @@ ESX.SavePlayer = function(xPlayer, cb)
 	end)
 end
 
-ESX.SavePlayers = function(cb)
-	local xPlayers, asyncTasks = ESX.GetPlayers(), {}
+RDX.SavePlayers = function(cb)
+	local xPlayers, asyncTasks = RDX.GetPlayers(), {}
 
 	for i=1, #xPlayers, 1 do
 		table.insert(asyncTasks, function(cb2)
-			local xPlayer = ESX.GetPlayerFromId(xPlayers[i])
-			ESX.SavePlayer(xPlayer, cb2)
+			local xPlayer = RDX.GetPlayerFromId(xPlayers[i])
+			RDX.SavePlayer(xPlayer, cb2)
 		end)
 	end
 
 	Async.parallelLimit(asyncTasks, 8, function(results)
-		print(('[es_extended] [^2INFO^7] Saved %s player(s)'):format(#xPlayers))
+		print(('[redm_extended] [^2INFO^7] Saved %s player(s)'):format(#xPlayers))
 		if cb then
 			cb()
 		end
 	end)
 end
 
-ESX.StartDBSync = function()
+RDX.StartDBSync = function()
 	function saveData()
-		ESX.SavePlayers()
+		RDX.SavePlayers()
 		SetTimeout(10 * 60 * 1000, saveData)
 	end
 
 	SetTimeout(10 * 60 * 1000, saveData)
 end
 
-ESX.GetPlayers = function()
+RDX.GetPlayers = function()
 	local sources = {}
 
-	for k,v in pairs(ESX.Players) do
+	for k,v in pairs(RDX.Players) do
 		table.insert(sources, k)
 	end
 
 	return sources
 end
 
-ESX.GetPlayerFromId = function(source)
-	return ESX.Players[tonumber(source)]
+RDX.GetPlayerFromId = function(source)
+	return RDX.Players[tonumber(source)]
 end
 
-ESX.GetPlayerFromIdentifier = function(identifier)
-	for k,v in pairs(ESX.Players) do
+RDX.GetPlayerFromIdentifier = function(identifier)
+	for k,v in pairs(RDX.Players) do
 		if v.identifier == identifier then
 			return v
 		end
 	end
 end
 
-ESX.RegisterUsableItem = function(item, cb)
-	ESX.UsableItemsCallbacks[item] = cb
+RDX.RegisterUsableItem = function(item, cb)
+	RDX.UsableItemsCallbacks[item] = cb
 end
 
-ESX.UseItem = function(source, item)
-	ESX.UsableItemsCallbacks[item](source)
+RDX.UseItem = function(source, item)
+	RDX.UsableItemsCallbacks[item](source)
 end
 
-ESX.GetItemLabel = function(item)
-	if ESX.Items[item] then
-		return ESX.Items[item].label
+RDX.GetItemLabel = function(item)
+	if RDX.Items[item] then
+		return RDX.Items[item].label
 	end
 end
 
-ESX.CreatePickup = function(type, name, count, label, playerId, components, tintIndex)
-	local pickupId = (ESX.PickupId == 65635 and 0 or ESX.PickupId + 1)
-	local xPlayer = ESX.GetPlayerFromId(playerId)
+RDX.CreatePickup = function(type, name, count, label, playerId, components, tintIndex)
+	local pickupId = (RDX.PickupId == 65635 and 0 or RDX.PickupId + 1)
+	local xPlayer = RDX.GetPlayerFromId(playerId)
 	local coords = xPlayer.getCoords()
 
-	ESX.Pickups[pickupId] = {
+	RDX.Pickups[pickupId] = {
 		type = type, name = name,
 		count = count, label = label,
 		coords = coords
 	}
 
 	if type == 'item_weapon' then
-		ESX.Pickups[pickupId].components = components
-		ESX.Pickups[pickupId].tintIndex = tintIndex
+		RDX.Pickups[pickupId].components = components
+		RDX.Pickups[pickupId].tintIndex = tintIndex
 	end
 
-	TriggerClientEvent('esx:createPickup', -1, pickupId, label, coords, type, name, components, tintIndex)
-	ESX.PickupId = pickupId
+	TriggerClientEvent('rdx:createPickup', -1, pickupId, label, coords, type, name, components, tintIndex)
+	RDX.PickupId = pickupId
 end
 
-ESX.DoesJobExist = function(job, grade)
+RDX.DoesJobExist = function(job, grade)
 	grade = tostring(grade)
 
 	if job and grade then
-		if ESX.Jobs[job] and ESX.Jobs[job].grades[grade] then
+		if RDX.Jobs[job] and RDX.Jobs[job].grades[grade] then
 			return true
 		end
 	end
 
 	return false
+end
+
+RDX.GetPlayerIdentifier = function(playerId)
+	for k,v in ipairs(GetPlayerIdentifiers(playerId)) do
+		if string.match(v, 'license:') then
+			return string.sub(v, 9)
+		end
+	end
 end

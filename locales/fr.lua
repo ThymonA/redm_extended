@@ -57,7 +57,6 @@ Locales['fr'] = {
   ['command_car'] = 'faire appaitre un véhicule',
   ['command_car_car'] = 'nom ou hash du véhicule',
   ['command_cardel'] = 'supprimer le véhicule à proximité',
-  ['command_cardel_radius'] = 'optionnel, supprime les véhicules dans un rayon spécifié',
   ['command_clear'] = 'vider le chat',
   ['command_clearall'] = 'vider le chat pour tous',
   ['command_clearinventory'] = 'vider l\'inventaire d\'un joueur',

@@ -4,21 +4,21 @@ for i = 48,  57 do table.insert(Charset, string.char(i)) end
 for i = 65,  90 do table.insert(Charset, string.char(i)) end
 for i = 97, 122 do table.insert(Charset, string.char(i)) end
 
-ESX.GetRandomString = function(length)
+RDX.GetRandomString = function(length)
 	math.randomseed(GetGameTimer())
 
 	if length > 0 then
-		return ESX.GetRandomString(length - 1) .. Charset[math.random(1, #Charset)]
+		return RDX.GetRandomString(length - 1) .. Charset[math.random(1, #Charset)]
 	else
 		return ''
 	end
 end
 
-ESX.GetConfig = function()
+RDX.GetConfig = function()
 	return Config
 end
 
-ESX.GetWeapon = function(weaponName)
+RDX.GetWeapon = function(weaponName)
 	weaponName = string.upper(weaponName)
 
 	for k,v in ipairs(Config.Weapons) do
@@ -28,7 +28,7 @@ ESX.GetWeapon = function(weaponName)
 	end
 end
 
-ESX.GetWeaponFromHash = function(weaponHash)
+RDX.GetWeaponFromHash = function(weaponHash)
 	for k,v in ipairs(Config.Weapons) do
 		if GetHashKey(v.name) == weaponHash then
 			return v
@@ -36,11 +36,11 @@ ESX.GetWeaponFromHash = function(weaponHash)
 	end
 end
 
-ESX.GetWeaponList = function()
+RDX.GetWeaponList = function()
 	return Config.Weapons
 end
 
-ESX.GetWeaponLabel = function(weaponName)
+RDX.GetWeaponLabel = function(weaponName)
 	weaponName = string.upper(weaponName)
 
 	for k,v in ipairs(Config.Weapons) do
@@ -50,7 +50,7 @@ ESX.GetWeaponLabel = function(weaponName)
 	end
 end
 
-ESX.GetWeaponComponent = function(weaponName, weaponComponent)
+RDX.GetWeaponComponent = function(weaponName, weaponComponent)
 	weaponName = string.upper(weaponName)
 	local weapons = Config.Weapons
 
@@ -65,7 +65,7 @@ ESX.GetWeaponComponent = function(weaponName, weaponComponent)
 	end
 end
 
-ESX.DumpTable = function(table, nb)
+RDX.DumpTable = function(table, nb)
 	if nb == nil then
 		nb = 0
 	end
@@ -82,7 +82,7 @@ ESX.DumpTable = function(table, nb)
 			for i = 1, nb, 1 do
 				s = s .. "    "
 			end
-			s = s .. '['..k..'] = ' .. ESX.DumpTable(v, nb + 1) .. ',\n'
+			s = s .. '['..k..'] = ' .. RDX.DumpTable(v, nb + 1) .. ',\n'
 		end
 
 		for i = 1, nb, 1 do
@@ -95,6 +95,6 @@ ESX.DumpTable = function(table, nb)
 	end
 end
 
-ESX.Round = function(value, numDecimalPlaces)
-	return ESX.Math.Round(value, numDecimalPlaces)
+RDX.Round = function(value, numDecimalPlaces)
+	return RDX.Math.Round(value, numDecimalPlaces)
 end

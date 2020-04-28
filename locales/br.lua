@@ -57,7 +57,6 @@ Locales['br'] = {
   ['command_car'] = 'spawn um carro',
   ['command_car_car'] = 'nome do carro',
   ['command_cardel'] = 'excluir veículo',
-  ['command_cardel_radius'] = 'optional, delete every vehicle within the specified radius',
   ['command_clear'] = 'limpar o chat',
   ['command_clearall'] = 'limpar o chat para todos',
   ['command_clearinventory'] = 'remover todos os itens do inventário',

@@ -38,6 +38,7 @@ local entityEnumerator = {
 local function EnumerateEntities(initFunc, moveFunc, disposeFunc)
 	return coroutine.wrap(function()
 		local iter, id = initFunc()
+
 		if not id or id == 0 then
 			disposeFunc(iter)
 			return
@@ -87,7 +88,9 @@ function EnumeratePeds()
 end
 
 function EnumerateVehicles()
-	return EnumerateEntities(FindFirstVehicle, FindNextVehicle, EndFindVehicle)
+	return EnumerateEntities(function(outEntity)
+		return Citizen.InvokeNative(0x15e55694, Citizen.PointerValueIntInitialized(outEntity), Citizen.ReturnResultAnyway(), Citizen.ResultAsInteger())
+	end, FindNextVehicle, EndFindVehicle)
 end
 
 function EnumeratePickups()

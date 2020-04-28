@@ -23,11 +23,11 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
 
 	self.setCoords = function(coords)
 		self.updateCoords(coords)
-		self.triggerEvent('esx:teleport', coords)
+		self.triggerEvent('rdx:teleport', coords)
 	end
 
 	self.updateCoords = function(coords)
-		self.coords = {x = ESX.Math.Round(coords.x, 1), y = ESX.Math.Round(coords.y, 1), z = ESX.Math.Round(coords.z, 1), heading = ESX.Math.Round(coords.heading or 0.0, 1)}
+		self.coords = {x = RDX.Math.Round(coords.x, 1), y = RDX.Math.Round(coords.y, 1), z = RDX.Math.Round(coords.z, 1), heading = RDX.Math.Round(coords.heading or 0.0, 1)}
 	end
 
 	self.getCoords = function(vector)
@@ -43,7 +43,7 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
 	end
 
 	self.setMoney = function(money)
-		money = ESX.Math.Round(money)
+		money = RDX.Math.Round(money)
 		self.setAccountMoney('money', money)
 	end
 
@@ -52,12 +52,12 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
 	end
 
 	self.addMoney = function(money)
-		money = ESX.Math.Round(money)
+		money = RDX.Math.Round(money)
 		self.addAccountMoney('money', money)
 	end
 
 	self.removeMoney = function(money)
-		money = ESX.Math.Round(money)
+		money = RDX.Math.Round(money)
 		self.removeAccountMoney('money', money)
 	end
 
@@ -168,10 +168,10 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
 
 			if account then
 				local prevMoney = account.money
-				local newMoney = ESX.Math.Round(money)
+				local newMoney = RDX.Math.Round(money)
 				account.money = newMoney
 
-				self.triggerEvent('esx:setAccountMoney', account)
+				self.triggerEvent('rdx:setAccountMoney', account)
 			end
 		end
 	end
@@ -181,10 +181,10 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
 			local account = self.getAccount(accountName)
 
 			if account then
-				local newMoney = account.money + ESX.Math.Round(money)
+				local newMoney = account.money + RDX.Math.Round(money)
 				account.money = newMoney
 
-				self.triggerEvent('esx:setAccountMoney', account)
+				self.triggerEvent('rdx:setAccountMoney', account)
 			end
 		end
 	end
@@ -194,10 +194,10 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
 			local account = self.getAccount(accountName)
 
 			if account then
-				local newMoney = account.money - ESX.Math.Round(money)
+				local newMoney = account.money - RDX.Math.Round(money)
 				account.money = newMoney
 
-				self.triggerEvent('esx:setAccountMoney', account)
+				self.triggerEvent('rdx:setAccountMoney', account)
 			end
 		end
 	end
@@ -216,12 +216,12 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
 		local item = self.getInventoryItem(name)
 
 		if item then
-			count = ESX.Math.Round(count)
+			count = RDX.Math.Round(count)
 			item.count = item.count + count
 			self.weight = self.weight + (item.weight * count)
 
-			TriggerEvent('esx:onAddInventoryItem', self.source, item.name, item.count)
-			self.triggerEvent('esx:addInventoryItem', item.name, item.count)
+			TriggerEvent('rdx:onAddInventoryItem', self.source, item.name, item.count)
+			self.triggerEvent('rdx:addInventoryItem', item.name, item.count)
 		end
 	end
 
@@ -229,15 +229,15 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
 		local item = self.getInventoryItem(name)
 
 		if item then
-			count = ESX.Math.Round(count)
+			count = RDX.Math.Round(count)
 			local newCount = item.count - count
 
 			if newCount >= 0 then
 				item.count = newCount
 				self.weight = self.weight - (item.weight * count)
 
-				TriggerEvent('esx:onRemoveInventoryItem', self.source, item.name, item.count)
-				self.triggerEvent('esx:removeInventoryItem', item.name, item.count)
+				TriggerEvent('rdx:onRemoveInventoryItem', self.source, item.name, item.count)
+				self.triggerEvent('rdx:removeInventoryItem', item.name, item.count)
 			end
 		end
 	end
@@ -246,7 +246,7 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
 		local item = self.getInventoryItem(name)
 
 		if item and count >= 0 then
-			count = ESX.Math.Round(count)
+			count = RDX.Math.Round(count)
 
 			if count > item.count then
 				self.addInventoryItem(item.name, count - item.count)
@@ -265,7 +265,7 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
 	end
 
 	self.canCarryItem = function(name, count)
-		local currentWeight, itemWeight = self.weight, ESX.Items[name].weight
+		local currentWeight, itemWeight = self.weight, RDX.Items[name].weight
 		local newWeight = currentWeight + (itemWeight * count)
 
 		return newWeight <= self.maxWeight
@@ -276,8 +276,8 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
 		local testItemObject = self.getInventoryItem(testItem)
 
 		if firstItemObject.count >= firstItemCount then
-			local weightWithoutFirstItem = ESX.Math.Round(self.weight - (firstItemObject.weight * firstItemCount))
-			local weightWithTestItem = ESX.Math.Round(weightWithoutFirstItem + (testItemObject.weight * testItemCount))
+			local weightWithoutFirstItem = RDX.Math.Round(self.weight - (firstItemObject.weight * firstItemCount))
+			local weightWithTestItem = RDX.Math.Round(weightWithoutFirstItem + (testItemObject.weight * testItemCount))
 
 			return weightWithTestItem <= self.maxWeight
 		end
@@ -287,15 +287,15 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
 
 	self.setMaxWeight = function(newWeight)
 		self.maxWeight = newWeight
-		self.triggerEvent('esx:setMaxWeight', self.maxWeight)
+		self.triggerEvent('rdx:setMaxWeight', self.maxWeight)
 	end
 
 	self.setJob = function(job, grade)
 		grade = tostring(grade)
 		local lastJob = json.decode(json.encode(self.job))
 
-		if ESX.DoesJobExist(job, grade) then
-			local jobObject, gradeObject = ESX.Jobs[job], ESX.Jobs[job].grades[grade]
+		if RDX.DoesJobExist(job, grade) then
+			local jobObject, gradeObject = RDX.Jobs[job], RDX.Jobs[job].grades[grade]
 
 			self.job.id    = jobObject.id
 			self.job.name  = jobObject.name
@@ -318,16 +318,16 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
 				self.job.skin_female = {}
 			end
 
-			TriggerEvent('esx:setJob', self.source, self.job, lastJob)
-			self.triggerEvent('esx:setJob', self.job)
+			TriggerEvent('rdx:setJob', self.source, self.job, lastJob)
+			self.triggerEvent('rdx:setJob', self.job)
 		else
-			print(('[es_extended] [^3WARNING^7] Ignoring invalid .setJob() usage for "%s"'):format(self.identifier))
+			print(('[redm_extended] [^3WARNING^7] Ignoring invalid .setJob() usage for "%s"'):format(self.identifier))
 		end
 	end
 
 	self.addWeapon = function(weaponName, ammo)
 		if not self.hasWeapon(weaponName) then
-			local weaponLabel = ESX.GetWeaponLabel(weaponName)
+			local weaponLabel = RDX.GetWeaponLabel(weaponName)
 
 			table.insert(self.loadout, {
 				name = weaponName,
@@ -337,8 +337,8 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
 				tintIndex = 0
 			})
 
-			self.triggerEvent('esx:addWeapon', weaponName, ammo)
-			self.triggerEvent('esx:addInventoryItem', weaponLabel, false, true)
+			self.triggerEvent('rdx:addWeapon', weaponName, ammo)
+			self.triggerEvent('rdx:addInventoryItem', weaponLabel, false, true)
 		end
 	end
 
@@ -346,13 +346,13 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
 		local loadoutNum, weapon = self.getWeapon(weaponName)
 
 		if weapon then
-			local component = ESX.GetWeaponComponent(weaponName, weaponComponent)
+			local component = RDX.GetWeaponComponent(weaponName, weaponComponent)
 
 			if component then
 				if not self.hasWeaponComponent(weaponName, weaponComponent) then
 					table.insert(self.loadout[loadoutNum].components, weaponComponent)
-					self.triggerEvent('esx:addWeaponComponent', weaponName, weaponComponent)
-					self.triggerEvent('esx:addInventoryItem', component.label, false, true)
+					self.triggerEvent('rdx:addWeaponComponent', weaponName, weaponComponent)
+					self.triggerEvent('rdx:addInventoryItem', component.label, false, true)
 				end
 			end
 		end
@@ -363,7 +363,7 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
 
 		if weapon then
 			weapon.ammo = weapon.ammo + ammoCount
-			self.triggerEvent('esx:setWeaponAmmo', weaponName, weapon.ammo)
+			self.triggerEvent('rdx:setWeaponAmmo', weaponName, weapon.ammo)
 		end
 	end
 
@@ -381,12 +381,12 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
 		local loadoutNum, weapon = self.getWeapon(weaponName)
 
 		if weapon then
-			local weaponNum, weaponObject = ESX.GetWeapon(weaponName)
+			local weaponNum, weaponObject = RDX.GetWeapon(weaponName)
 
 			if weaponObject.tints and weaponObject.tints[weaponTintIndex] then
 				self.loadout[loadoutNum].tintIndex = weaponTintIndex
-				self.triggerEvent('esx:setWeaponTint', weaponName, weaponTintIndex)
-				self.triggerEvent('esx:addInventoryItem', weaponObject.tints[weaponTintIndex], false, true)
+				self.triggerEvent('rdx:setWeaponTint', weaponName, weaponTintIndex)
+				self.triggerEvent('rdx:addInventoryItem', weaponObject.tints[weaponTintIndex], false, true)
 			end
 		end
 	end
@@ -418,8 +418,8 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
 		end
 
 		if weaponLabel then
-			self.triggerEvent('esx:removeWeapon', weaponName)
-			self.triggerEvent('esx:removeInventoryItem', weaponLabel, false, true)
+			self.triggerEvent('rdx:removeWeapon', weaponName)
+			self.triggerEvent('rdx:removeInventoryItem', weaponLabel, false, true)
 		end
 	end
 
@@ -427,7 +427,7 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
 		local loadoutNum, weapon = self.getWeapon(weaponName)
 
 		if weapon then
-			local component = ESX.GetWeaponComponent(weaponName, weaponComponent)
+			local component = RDX.GetWeaponComponent(weaponName, weaponComponent)
 
 			if component then
 				if self.hasWeaponComponent(weaponName, weaponComponent) then
@@ -438,8 +438,8 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
 						end
 					end
 
-					self.triggerEvent('esx:removeWeaponComponent', weaponName, weaponComponent)
-					self.triggerEvent('esx:removeInventoryItem', component.label, false, true)
+					self.triggerEvent('rdx:removeWeaponComponent', weaponName, weaponComponent)
+					self.triggerEvent('rdx:removeInventoryItem', component.label, false, true)
 				end
 			end
 		end
@@ -450,7 +450,7 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
 
 		if weapon then
 			weapon.ammo = weapon.ammo - ammoCount
-			self.triggerEvent('esx:setWeaponAmmo', weaponName, weapon.ammo)
+			self.triggerEvent('rdx:setWeaponAmmo', weaponName, weapon.ammo)
 		end
 	end
 
@@ -491,11 +491,11 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
 	end
 
 	self.showNotification = function(msg, flash, saveToBrief, hudColorIndex)
-		self.triggerEvent('esx:showNotification', msg, flash, saveToBrief, hudColorIndex)
+		self.triggerEvent('rdx:showNotification', msg, flash, saveToBrief, hudColorIndex)
 	end
 
 	self.showHelpNotification = function(msg, thisFrame, beep, duration)
-		self.triggerEvent('esx:showHelpNotification', msg, thisFrame, beep, duration)
+		self.triggerEvent('rdx:showHelpNotification', msg, thisFrame, beep, duration)
 	end
 
 	return self

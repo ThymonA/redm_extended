@@ -1,5 +1,5 @@
-CREATE DATABASE IF NOT EXISTS `es_extended`;
-USE `es_extended`;
+CREATE DATABASE IF NOT EXISTS `redm_extended`;
+USE `redm_extended`;
 
 CREATE TABLE `users` (
 	`identifier` VARCHAR(40) NOT NULL,
@@ -9,7 +9,7 @@ CREATE TABLE `users` (
 	`job` VARCHAR(20) NULL DEFAULT 'unemployed',
 	`job_grade` INT(11) NULL DEFAULT 0,
 	`loadout` LONGTEXT NULL DEFAULT NULL,
-	`position` VARCHAR(53) NULL DEFAULT '{"x":-269.4,"y":-955.3,"z":31.2,"heading":205.8}',
+	`position` VARCHAR(53) NULL DEFAULT '{"x":-328.02,"y":775.91,"z":120.63,"heading":194.99}',
 
 	PRIMARY KEY (`identifier`)
 );

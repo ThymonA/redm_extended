@@ -56,7 +56,6 @@ Locales['pl'] = {
   ['command_car'] = 'przywołaj pojazd',
   ['command_car_car'] = 'nazwa lub hash przywołanego pojazdu',
   ['command_cardel'] = 'usuń pojazd w pobliżu',
-  ['command_cardel_radius'] = 'opcjonalnie usuń każdy pojazd w obszarze',
   ['command_clear'] = 'wyczyść czat',
   ['command_clearall'] = 'wyczyść czat dla wszystkich graczy',
   ['command_clearinventory'] = 'wyczyść ekwipunek gracza',
