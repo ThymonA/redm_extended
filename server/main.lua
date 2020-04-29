@@ -1,3 +1,31 @@
+Citizen.CreateThread(function()
+	local resourcesStopped = {}
+
+	for resourceName,reason in pairs(Config.IncompatibleResourcesToStop) do
+		local status = GetResourceState(resourceName)
+
+		if status == 'started' or status == 'starting' then
+			while GetResourceState(resourceName) == 'starting' do
+				Citizen.Wait(100)
+			end
+
+			ExecuteCommand(('stop %s'):format(resourceName))
+
+			resourcesStopped[resourceName] = reason
+		end
+	end
+
+	if RDX.Table.SizeOf(resourcesStopped) > 0 then
+		local allStoppedResources = ''
+
+		for resourceName,reason in pairs(resourcesStopped) do
+			allStoppedResources = ('%s\n- ^3%s^7, %s'):format(allStoppedResources, resourceName, reason)
+		end
+
+		print(('[redm_extended] [^3WARNING^7] Stopped %s incompatible resource(s) that can cause issues when used with RDX. They are not needed and can safely be removed from your server, remove these resource(s) from your resource directory and your configuration file:%s'):format(RDX.Table.SizeOf(resourcesStopped), allStoppedResources))
+	end
+end)
+
 RegisterNetEvent('rdx:onPlayerJoined')
 AddEventHandler('rdx:onPlayerJoined', function()
 	if not RDX.Players[source] then

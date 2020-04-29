@@ -17,17 +17,20 @@ AddEventHandler('rdx:playerLoaded', function(playerData)
 	RDX.PlayerData = playerData
 
 	-- check if player is coming from loading screen
-	if GetEntityModel(PlayerPedId()) == GetHashKey('PLAYER_ZERO') then
-		local defaultModel = GetHashKey('CS_dutch')
-		RequestModel(defaultModel)
+	if GetEntityModel(PlayerPedId()) == 0x0D7114C9 or GetEntityModel(PlayerPedId) == 0x00B69710 then
+		local defaultModel = 0xF5C1611E -- mp_male
 
-		while not HasModelLoaded(defaultModel) do
-			Citizen.Wait(10)
+		if (IsModelInCdimage(defaultModel)) then
+			RequestModel(defaultModel)
+
+			while not HasModelLoaded(defaultModel) do
+				Citizen.Wait(0)
+			end
+
+			SetPlayerModel(PlayerId(), defaultModel, 0)
+			SetPedOutfitPreset(PlayerPedId(), 0, 0)
+			SetModelAsNoLongerNeeded(defaultModel)
 		end
-
-		SetPlayerModel(PlayerId(), defaultModel)
-		SetPedRandomComponentVariation(PlayerPedId(), true)
-		SetModelAsNoLongerNeeded(defaultModel)
 	end
 
 	-- enable PVP
