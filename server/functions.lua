@@ -266,7 +266,6 @@ RDX.CreatePickup = function(type, name, count, label, playerId, components, tint
 
 	if type == 'item_weapon' then
 		RDX.Pickups[pickupId].components = components
-		RDX.Pickups[pickupId].tintIndex = tintIndex
 	end
 
 	TriggerClientEvent('rdx:createPickup', -1, pickupId, label, coords, type, name, components, tintIndex)

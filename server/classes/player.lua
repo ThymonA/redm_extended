@@ -131,7 +131,6 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
 
 			for k,v in ipairs(self.loadout) do
 				minimalLoadout[v.name] = {ammo = v.ammo}
-				if v.tintIndex > 0 then minimalLoadout[v.name].tintIndex = v.tintIndex end
 
 				if #v.components > 0 then
 					local components = {}
@@ -375,30 +374,6 @@ function CreateExtendedPlayer(playerId, identifier, group, accounts, inventory, 
 				weapon.ammo = ammoCount
 			end
 		end
-	end
-
-	self.setWeaponTint = function(weaponName, weaponTintIndex)
-		local loadoutNum, weapon = self.getWeapon(weaponName)
-
-		if weapon then
-			local weaponNum, weaponObject = RDX.GetWeapon(weaponName)
-
-			if weaponObject.tints and weaponObject.tints[weaponTintIndex] then
-				self.loadout[loadoutNum].tintIndex = weaponTintIndex
-				self.triggerEvent('rdx:setWeaponTint', weaponName, weaponTintIndex)
-				self.triggerEvent('rdx:addInventoryItem', weaponObject.tints[weaponTintIndex], false, true)
-			end
-		end
-	end
-
-	self.getWeaponTint = function(weaponName)
-		local loadoutNum, weapon = self.getWeapon(weaponName)
-
-		if weapon then
-			return weapon.tintIndex
-		end
-
-		return 0
 	end
 
 	self.removeWeapon = function(weaponName)

@@ -205,14 +205,12 @@ function loadRDXPlayer(identifier, playerId)
 
 					if label then
 						if not weapon.components then weapon.components = {} end
-						if not weapon.tintIndex then weapon.tintIndex = 0 end
 
 						table.insert(userData.loadout, {
 							name = name,
 							ammo = weapon.ammo,
 							label = label,
-							components = weapon.components,
-							tintIndex = weapon.tintIndex
+							components = weapon.components
 						})
 					end
 				end
@@ -430,7 +428,7 @@ AddEventHandler('rdx:removeInventoryItem', function(type, itemName, itemCount)
 				xPlayer.showNotification(_U('threw_weapon', weapon.label))
 			end
 
-			RDX.CreatePickup('item_weapon', itemName, weapon.ammo, pickupLabel, playerId, components, weapon.tintIndex)
+			RDX.CreatePickup('item_weapon', itemName, weapon.ammo, pickupLabel, playerId, components)
 		end
 	end
 end)
@@ -468,7 +466,6 @@ AddEventHandler('rdx:onPickup', function(pickupId)
 			else
 				success = true
 				xPlayer.addWeapon(pickup.name, pickup.count)
-				xPlayer.setWeaponTint(pickup.name, pickup.tintIndex)
 
 				for k,v in ipairs(pickup.components) do
 					xPlayer.addWeaponComponent(pickup.name, v)

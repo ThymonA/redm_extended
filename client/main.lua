@@ -16,8 +16,10 @@ AddEventHandler('rdx:playerLoaded', function(playerData)
 	RDX.PlayerLoaded = true
 	RDX.PlayerData = playerData
 
+	local playerPed = PlayerPedId()
+
 	-- check if player is coming from loading screen
-	if GetEntityModel(PlayerPedId()) == 0x0D7114C9 or GetEntityModel(PlayerPedId) == 0x00B69710 then
+	if GetEntityModel(playerPed) == 0x0D7114C9 or GetEntityModel(playerPed) == 0x00B69710 then
 		local defaultModel = 0xF5C1611E -- mp_male
 
 		if (IsModelInCdimage(defaultModel)) then
@@ -94,27 +96,30 @@ end)
 AddEventHandler('rdx:restoreLoadout', function()
 	local playerPed = PlayerPedId()
 	local ammoTypes = {}
-	RemoveAllPedWeapons(playerPed, true)
+	local retval, currentWeaponHash = GetCurrentPedWeapon(playerPed, true)
+
+	RemoveAllPedWeapons(playerPed, true, true)
 
 	for k,v in ipairs(RDX.PlayerData.loadout) do
 		local weaponName = v.name
 		local weaponHash = GetHashKey(weaponName)
 
-		GiveWeaponToPed(playerPed, weaponHash, 0, false, false)
-		SetPedWeaponTintIndex(playerPed, weaponHash, v.tintIndex)
+		GiveWeaponToPed_2(playerPed, weaponHash, 0, true, false, 0, false, 0.5, 1.0, 0, false, 0, false);
 
 		local ammoType = GetPedAmmoTypeFromWeapon(playerPed, weaponHash)
 
 		for k2,v2 in ipairs(v.components) do
 			local componentHash = RDX.GetWeaponComponent(weaponName, v2).hash
-			GiveWeaponComponentToPed(playerPed, weaponHash, componentHash)
+			GiveWeaponComponentToEntity(playerPed, componentHash, weaponHash, true)
 		end
 
 		if not ammoTypes[ammoType] then
-			AddAmmoToPed(playerPed, weaponHash, v.ammo)
+			SetPedAmmo(playerPed, weaponHash, v.ammo)
 			ammoTypes[ammoType] = true
 		end
 	end
+
+	SetCurrentPedWeapon(playerPed, currentWeaponHash, true)
 end)
 
 RegisterNetEvent('rdx:setAccountMoney')
@@ -180,8 +185,11 @@ RegisterNetEvent('rdx:addWeapon')
 AddEventHandler('rdx:addWeapon', function(weaponName, ammo)
 	local playerPed = PlayerPedId()
 	local weaponHash = GetHashKey(weaponName)
+	local retval, currentWeaponHash = GetCurrentPedWeapon(playerPed, true)
 
-	GiveWeaponToPed(playerPed, weaponHash, ammo, false, false)
+	GiveWeaponToPed_2(playerPed, weaponHash, ammo, true, false, 0, false, 0.5, 1.0, 0, false, 0, false);
+
+	SetCurrentPedWeapon(playerPed, currentWeaponHash, true)
 end)
 
 RegisterNetEvent('rdx:addWeaponComponent')
@@ -190,7 +198,7 @@ AddEventHandler('rdx:addWeaponComponent', function(weaponName, weaponComponent)
 	local weaponHash = GetHashKey(weaponName)
 	local componentHash = RDX.GetWeaponComponent(weaponName, weaponComponent).hash
 
-	GiveWeaponComponentToPed(playerPed, weaponHash, componentHash)
+	GiveWeaponComponentToEntity(playerPed, componentHash, weaponHash, true)
 end)
 
 RegisterNetEvent('rdx:setWeaponAmmo')
@@ -199,14 +207,6 @@ AddEventHandler('rdx:setWeaponAmmo', function(weaponName, weaponAmmo)
 	local weaponHash = GetHashKey(weaponName)
 
 	SetPedAmmo(playerPed, weaponHash, weaponAmmo)
-end)
-
-RegisterNetEvent('rdx:setWeaponTint')
-AddEventHandler('rdx:setWeaponTint', function(weaponName, weaponTintIndex)
-	local playerPed = PlayerPedId()
-	local weaponHash = GetHashKey(weaponName)
-
-	SetPedWeaponTintIndex(playerPed, weaponHash, weaponTintIndex)
 end)
 
 RegisterNetEvent('rdx:removeWeapon')
@@ -224,7 +224,7 @@ AddEventHandler('rdx:removeWeaponComponent', function(weaponName, weaponComponen
 	local weaponHash = GetHashKey(weaponName)
 	local componentHash = RDX.GetWeaponComponent(weaponName, weaponComponent).hash
 
-	RemoveWeaponComponentFromPed(playerPed, weaponHash, componentHash)
+	RemoveWeaponComponentFromPed(playerPed, componentHash, weaponHash)
 end)
 
 RegisterNetEvent('rdx:teleport')
@@ -301,7 +301,7 @@ end)
 RegisterNetEvent('rdx:createMissingPickups')
 AddEventHandler('rdx:createMissingPickups', function(missingPickups)
 	for pickupId,pickup in pairs(missingPickups) do
-		TriggerEvent('rdx:createPickup', pickupId, pickup.label, pickup.coords, pickup.type, pickup.name, pickup.components, pickup.tintIndex)
+		TriggerEvent('rdx:createPickup', pickupId, pickup.label, pickup.coords, pickup.type, pickup.name, pickup.components)
 	end
 end)
 
