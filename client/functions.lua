@@ -45,40 +45,23 @@ RDX.SetPlayerData = function(key, val)
 end
 
 RDX.ShowNotification = function(msg, flash, saveToBrief, hudColorIndex)
-	if saveToBrief == nil then saveToBrief = true end
-	AddTextEntry('rdxNotification', msg)
-	BeginTextCommandThefeedPost('rdxNotification')
-	if hudColorIndex then ThefeedNextPostBackgroundColor(hudColorIndex) end
-	EndTextCommandThefeedPostTicker(flash or false, saveToBrief)
 end
 
 RDX.ShowAdvancedNotification = function(sender, subject, msg, textureDict, iconType, flash, saveToBrief, hudColorIndex)
-	if saveToBrief == nil then saveToBrief = true end
-	AddTextEntry('rdxAdvancedNotification', msg)
-	BeginTextCommandThefeedPost('rdxAdvancedNotification')
-	if hudColorIndex then ThefeedNextPostBackgroundColor(hudColorIndex) end
-	EndTextCommandThefeedPostMessagetext(textureDict, textureDict, false, iconType, sender, subject)
-	EndTextCommandThefeedPostTicker(flash or false, saveToBrief)
 end
 
 RDX.ShowHelpNotification = function(msg, thisFrame, beep, duration)
-	AddTextEntry('rdxHelpNotification', msg)
-
-	if thisFrame then
-		DisplayHelpTextThisFrame('rdxHelpNotification', false)
-	else
-		if beep == nil then beep = true end
-		BeginTextCommandDisplayHelp('rdxHelpNotification')
-		EndTextCommandDisplayHelp(0, false, beep, duration or -1)
-	end
 end
 
 RDX.ShowFloatingHelpNotification = function(msg, coords)
-	AddTextEntry('rdxFloatingHelpNotification', msg)
-	SetFloatingHelpTextWorldPosition(1, coords)
-	SetFloatingHelpTextStyle(1, 1, 2, -1, 3, 0)
-	BeginTextCommandDisplayHelp('rdxFloatingHelpNotification')
-	EndTextCommandDisplayHelp(2, false, false, -1)
+end
+
+RDX.ShowTopLeftNotification = function(title, subTitle, iconDict, icon, duration)
+	TriggerEvent('rdx:displayLeftNotification', title, subTitle, iconDict, icon, duration)
+end
+
+RDX.ShowTopCenterNotification = function(text, duration, town)
+	TriggerEvent('rdx:displayTopCenterNotification', text, duration, town)
 end
 
 RDX.TriggerServerCallback = function(name, cb, ...)

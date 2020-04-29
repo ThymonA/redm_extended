@@ -101,10 +101,7 @@
 		}
 	};
 
-	window.onload = function (e) {
-		window.addEventListener('message', (event) => {
-			onData(event.data);
-		});
-	};
-
+	window.addEventListener('message', function(event) {
+		onData(event.data);
+	});
 })();

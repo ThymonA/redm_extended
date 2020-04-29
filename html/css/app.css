@@ -1,11 +1,56 @@
 @font-face {
-	font-family: 'Pricedown';
-	src: url('../fonts/pdown.ttf')
+    font-family: 'RDR Gothica';
+    src: url('../fonts/RDR/RDRGothica-Regular.eot');
+    src: url('../fonts/RDR/RDRGothica-Regular.eot?#iefix') format('embedded-opentype'),
+        url('../fonts/RDR/RDRGothica-Regular.woff2') format('woff2'),
+        url('../fonts/RDR/RDRGothica-Regular.woff') format('woff'),
+        url('../fonts/RDR/RDRGothica-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
 }
 
 @font-face {
-	font-family: 'bankgothic';
-	src: url('../fonts/bankgothic.ttf')
+    font-family: 'RDR Catalogue';
+    src: url('../fonts/RDR/RDRCatalogueBold-Bold.eot');
+    src: url('../fonts/RDR/RDRCatalogueBold-Bold.eot?#iefix') format('embedded-opentype'),
+        url('../fonts/RDR/RDRCatalogueBold-Bold.woff2') format('woff2'),
+        url('../fonts/RDR/RDRCatalogueBold-Bold.woff') format('woff'),
+        url('../fonts/RDR/RDRCatalogueBold-Bold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'RDR Lino';
+    src: url('../fonts/RDR/RDRLino-Regular.eot');
+    src: url('../fonts/RDR/RDRLino-Regular.eot?#iefix') format('embedded-opentype'),
+        url('../fonts/RDR/RDRLino-Regular.woff2') format('woff2'),
+        url('../fonts/RDR/RDRLino-Regular.woff') format('woff'),
+        url('../fonts/RDR/RDRLino-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Hapna Slab Serif';
+    src: url('../fonts/RDR/HapnaSlabSerif-DemiBold.eot');
+    src: url('../fonts/RDR/HapnaSlabSerif-DemiBold.eot?#iefix') format('embedded-opentype'),
+        url('../fonts/RDR/HapnaSlabSerif-DemiBold.woff2') format('woff2'),
+        url('../fonts/RDR/HapnaSlabSerif-DemiBold.woff') format('woff'),
+        url('../fonts/RDR/HapnaSlabSerif-DemiBold.ttf') format('truetype');
+    font-weight: 600;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Redemption';
+    src: url('../fonts/RDR/Redemption.eot');
+    src: url('../fonts/RDR/Redemption.eot?#iefix') format('embedded-opentype'),
+        url('../fonts/RDR/Redemption.woff2') format('woff2'),
+        url('../fonts/RDR/Redemption.woff') format('woff'),
+        url('../fonts/RDR/Redemption.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
 }
 
 html {
@@ -14,7 +59,7 @@ html {
 
 #hud {
 	position: absolute;
-	font-family: 'Pricedown';
+	font-family: 'Redemption';
 	font-size: 35px;
 	color: white;
 	padding: 4px;
@@ -22,6 +67,10 @@ html {
 	text-align: right;
 	top: 80;
 	right: 40;
+}
+
+#hud img.money {
+	max-width: 0.9em;
 }
 
 #inventory_notifications {

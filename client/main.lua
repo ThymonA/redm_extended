@@ -43,7 +43,7 @@ AddEventHandler('rdx:playerLoaded', function(playerData)
 
 	if Config.EnableHud then
 		for k,v in ipairs(playerData.accounts) do
-			local accountTpl = '<div><img src="img/accounts/' .. v.name .. '.png"/>&nbsp;{{money}}</div>'
+			local accountTpl = '<div><img class="money" src="img/accounts/' .. v.name .. '.png"/>&nbsp;{{money}}</div>'
 			RDX.UI.HUD.RegisterElement('account_' .. v.name, k, 0, accountTpl, {money = RDX.Math.GroupDigits(v.money)})
 		end
 
