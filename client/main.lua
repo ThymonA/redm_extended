@@ -18,7 +18,7 @@ AddEventHandler('rdx:playerLoaded', function(playerData)
 
 	-- check if player is coming from loading screen
 	if GetEntityModel(PlayerPedId()) == GetHashKey('PLAYER_ZERO') then
-		local defaultModel = GetHashKey('a_m_y_stbla_02')
+		local defaultModel = GetHashKey('CS_dutch')
 		RequestModel(defaultModel)
 
 		while not HasModelLoaded(defaultModel) do
@@ -26,13 +26,9 @@ AddEventHandler('rdx:playerLoaded', function(playerData)
 		end
 
 		SetPlayerModel(PlayerId(), defaultModel)
-		SetPedDefaultComponentVariation(PlayerPedId())
 		SetPedRandomComponentVariation(PlayerPedId(), true)
 		SetModelAsNoLongerNeeded(defaultModel)
 	end
-
-	-- freeze the player
-	FreezeEntityPosition(PlayerPedId(), true)
 
 	-- enable PVP
 	NetworkSetFriendlyFireOption(true)
@@ -411,7 +407,7 @@ Citizen.CreateThread(function()
 	while true do
 		Citizen.Wait(0)
 
-		if IsControlJustReleased(0, 289) then
+		if IsControlJustReleased(0, Controls.SelectItemWheel) then -- F4
 			if IsInputDisabled(0) and not isDead and not RDX.UI.Menu.IsOpen('default', 'redm_extended', 'inventory') then
 				RDX.ShowInventory()
 			end

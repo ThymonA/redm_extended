@@ -51,6 +51,8 @@ client_scripts {
 	'locales/sc.lua',
 	'locales/tc.lua',
 
+	'controls.lua',
+
 	'config.lua',
 	'config.weapons.lua',
 

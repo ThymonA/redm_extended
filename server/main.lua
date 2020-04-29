@@ -1,37 +1,3 @@
-Citizen.CreateThread(function()
-	SetMapName('San Andreas')
-	SetGameType('Roleplay')
-	local resourcesStopped, isAceGranted = {}, false
-
-	for resourceName,reason in pairs(Config.IncompatibleResourcesToStop) do
-		local status = GetResourceState(resourceName)
-
-		if status == 'started' or status == 'starting' then
-			while GetResourceState(resourceName) == 'starting' do
-				Citizen.Wait(100)
-			end
-
-			if not isAceGranted then
-				ExecuteCommand('add_ace resource.redm_extended command.stop allow')
-				isAceGranted = true
-			end
-
-			ExecuteCommand(('stop %s'):format(resourceName))
-			resourcesStopped[resourceName] = reason
-		end
-	end
-
-	if RDX.Table.SizeOf(resourcesStopped) > 0 then
-		local allStoppedResources = ''
-
-		for resourceName,reason in pairs(resourcesStopped) do
-			allStoppedResources = ('%s\n- ^3%s^7, %s'):format(allStoppedResources, resourceName, reason)
-		end
-
-		print(('[redm_extended] [^3WARNING^7] Stopped %s incompatible resource(s) that can cause issues when used with RDX. They are not needed and can safely be removed from your server, remove these resource(s) from your resource directory and your configuration file:%s'):format(RDX.Table.SizeOf(resourcesStopped), allStoppedResources))
-	end
-end)
-
 RegisterNetEvent('rdx:onPlayerJoined')
 AddEventHandler('rdx:onPlayerJoined', function()
 	if not RDX.Players[source] then
@@ -65,31 +31,6 @@ function onPlayerJoined(playerId)
 		end)
 	end
 end
-
-AddEventHandler('onResourceStart', function(resourceName)
-	if (resourceName ~= GetCurrentResourceName()) then
-		return
-	end
-
-	local players = GetPlayers()
-	local tasks = {}
-
-    for _, playerId in pairs(players) do
-		if (RDX.Players ~= nil and RDX.Players[tostring(playerId)] == nil) then
-			local identifier = RDX.GetPlayerIdentifier(playerId)
-
-			if (identifier) then
-				table.insert(tasks, function(cb)
-					loadRDXPlayer(identifier, playerId)
-					cb()
-				end)
-			end
-		end
-    end
-
-    Async.parallel(tasks, function(results)
-    end)
-end)
 
 AddEventHandler('onResourceStop', function(resourceName)
 	if (resourceName ~= GetCurrentResourceName()) then
@@ -263,7 +204,9 @@ function loadRDXPlayer(identifier, playerId)
 
 	Async.parallel(tasks, function(results)
 		local xPlayer = CreateExtendedPlayer(playerId, identifier, userData.group, userData.accounts, userData.inventory, userData.weight, userData.job, userData.loadout, userData.playerName, userData.coords)
+
 		RDX.Players[playerId] = xPlayer
+
 		TriggerEvent('rdx:playerLoaded', playerId, xPlayer)
 
 		xPlayer.triggerEvent('rdx:playerLoaded', {
@@ -279,6 +222,7 @@ function loadRDXPlayer(identifier, playerId)
 
 		xPlayer.triggerEvent('rdx:createMissingPickups', RDX.Pickups)
 		xPlayer.triggerEvent('rdx:registerSuggestions', RDX.RegisteredCommands)
+
 		print(('[redm_extended] [^2INFO^7] A player with name "%s^7" has connected to the server with assigned player id %s'):format(xPlayer.getName(), playerId))
 	end)
 end
