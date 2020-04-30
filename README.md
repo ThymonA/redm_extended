@@ -10,6 +10,7 @@ All credits go to ESX-Org for all the work they had in the original framework (e
 ## Links & Read more
 - [RedM Native Reference](https://vespura.com/doc/natives/)
 - [RDX Menu Default](https://github.com/TigoDevelopment/rdx_menu_default)
+- [RDX Menu Dialog](https://github.com/TigoDevelopment/rdx_menu_dialog)
 
 ## Features
 - Weight based inventory system
