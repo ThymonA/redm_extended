@@ -56,6 +56,8 @@ Locales['en'] = {
   -- Commands
   ['command_car'] = 'spawn a vehicle',
   ['command_car_car'] = 'vehicle spawn name or hash',
+  ['command_horse'] = 'spawn a horse',
+  ['command_horse_horse'] = 'horse spawn name, short or hash',
   ['command_cardel'] = 'delete vehicle in proximity',
   ['command_clear'] = 'clear chat',
   ['command_clearall'] = 'clear chat for all players',

@@ -6,6 +6,8 @@ Citizen.CreateThread(function()
 
 		if NetworkIsPlayerActive(PlayerId()) then
 			TriggerServerEvent('rdx:onPlayerJoined')
+			ShutdownLoadingScreen()
+			DoScreenFadeIn(10000)
 			break
 		end
 	end
@@ -262,6 +264,21 @@ AddEventHandler('rdx:spawnVehicle', function(vehicleName)
 		end)
 	else
 		TriggerEvent('chat:addMessage', {args = {'^1SYSTEM', 'Invalid vehicle model.'}})
+	end
+end)
+
+RegisterNetEvent('rdx:spawnPed')
+AddEventHandler('rdx:spawnPed', function(model)
+	model = (type(model) == 'number' and model or GetHashKey(model))
+
+	if IsModelInCdimage(model) then
+		local playerPed = PlayerPedId()
+		local playerCoords, playerHeading = GetEntityCoords(playerPed), GetEntityHeading(playerPed)
+
+		RDX.Game.SpawnPed(model, playerCoords, playerHeading, function(ped)
+		end)
+	else
+		TriggerEvent('chat:addMessage', {args = {'^1SYSTEM', 'Invalid ped model.'}})
 	end
 end)
 

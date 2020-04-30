@@ -316,7 +316,7 @@ RDX.Game.Teleport = function(entity, coords, cb)
 end
 
 RDX.Game.SpawnObject = function(model, coords, cb)
-	local model = (type(model) == 'number' and model or GetHashKey(model))
+	model = (type(model) == 'number' and model or GetHashKey(model))
 
 	Citizen.CreateThread(function()
 		RDX.Streaming.RequestModel(model)
@@ -330,7 +330,7 @@ RDX.Game.SpawnObject = function(model, coords, cb)
 end
 
 RDX.Game.SpawnLocalObject = function(model, coords, cb)
-	local model = (type(model) == 'number' and model or GetHashKey(model))
+	model = (type(model) == 'number' and model or GetHashKey(model))
 
 	Citizen.CreateThread(function()
 		RDX.Streaming.RequestModel(model)
@@ -340,6 +340,32 @@ RDX.Game.SpawnLocalObject = function(model, coords, cb)
 		if cb then
 			cb(obj)
 		end
+	end)
+end
+
+RDX.Game.SpawnPed = function(model, coords, heading, cb)
+	model = (type(model) == 'number' and model or GetHashKey(model))
+
+	Citizen.CreateThread(function()
+		RDX.Streaming.RequestModel(model, function()
+			local ped = CreatePed(model, coords.x, coords.y, coords.z, heading)
+			local timeout = 0
+
+			SetPedOutfitPreset(ped, true, false)
+			Citizen.InvokeNative(0x283978A15512B2FE, ped, true)
+			SetEntityAsMissionEntity(ped, true, false)
+			RequestCollisionAtCoord(coords.x, coords.y, coords.z)
+
+			-- we can get stuck here if any of the axies are "invalid"
+			while not HasCollisionLoadedAroundEntity(ped) and timeout < 2000 do
+				Citizen.Wait(0)
+				timeout = timeout + 1
+			end
+
+			if cb then
+				cb(ped)
+			end
+		end)
 	end)
 end
 

@@ -14,8 +14,9 @@ server_scripts {
 	'locale.lua',
 	'locales/en.lua',
 
-	'config.lua',
-	'config.weapons.lua',
+	'configs/config.lua',
+	'configs/config.weapons.lua',
+	'configs/config.horses.lua',
 
 	'server/common.lua',
 	'server/classes/player.lua',
@@ -35,8 +36,9 @@ client_scripts {
 
 	'controls.lua',
 
-	'config.lua',
-	'config.weapons.lua',
+	'configs/config.lua',
+	'configs/config.weapons.lua',
+	'configs/config.horses.lua',
 
 	'client/common.lua',
 	'client/entityiter.lua',

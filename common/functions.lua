@@ -65,6 +65,28 @@ RDX.GetWeaponComponent = function(weaponName, weaponComponent)
 	end
 end
 
+RDX.GetHorse = function(horseName)
+	horseName = string.lower(horseName)
+
+	for k,v in ipairs(Config.Horses) do
+		if (string.lower(v.name) == horseName or string.lower(v.short) == horseName) then
+			return k, v
+		end
+	end
+end
+
+RDX.GetHorseFromHash = function(horseHash)
+	for k,v in ipairs(Config.Horses) do
+		if (GetHashKey(v.name) == horseHash) then
+			return v
+		end
+	end
+end
+
+RDX.GetHorseList = function()
+	return Config.Horses
+end
+
 RDX.DumpTable = function(table, nb)
 	if nb == nil then
 		nb = 0

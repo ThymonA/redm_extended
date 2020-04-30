@@ -24,6 +24,18 @@ end, false, {help = _U('command_car'), validate = false, arguments = {
 	{name = 'car', help = _U('command_car_car'), type = 'any'}
 }})
 
+RDX.RegisterCommand('horse', 'admin', function(xPlayer, args, showError)
+	local index, horse = RDX.GetHorse(args.horse)
+
+	if (horse) then
+		xPlayer.triggerEvent('rdx:spawnPed', horse.name)
+	else
+		showError('Invalid horse name.')
+	end
+end, false, {help = _U('command_horse'), validate = false, arguments = {
+	{name = 'horse', help = _U('command_horse_horse'), type = 'any'}
+}})
+
 RDX.RegisterCommand({'cardel', 'dv'}, 'admin', function(xPlayer, args, showError)
 	xPlayer.triggerEvent('rdx:deleteVehicle')
 end, false, {help = _U('command_cardel'), validate = false, arguments = {}})
