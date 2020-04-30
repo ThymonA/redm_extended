@@ -267,19 +267,26 @@ AddEventHandler('rdx:spawnVehicle', function(vehicleName)
 	end
 end)
 
-RegisterNetEvent('rdx:spawnPed')
-AddEventHandler('rdx:spawnPed', function(model)
-	model = (type(model) == 'number' and model or GetHashKey(model))
+RegisterNetEvent('rdx:spawnHorse')
+AddEventHandler('rdx:spawnHorse', function(model)
+	local _, horse = RDX.GetHorse(model)
 
-	if IsModelInCdimage(model) then
-		local playerPed = PlayerPedId()
-		local playerCoords, playerHeading = GetEntityCoords(playerPed), GetEntityHeading(playerPed)
+	if (horse) then
+		model = (type(model) == 'number' and model or GetHashKey(model))
 
-		RDX.Game.SpawnPed(model, playerCoords, playerHeading, function(ped)
-		end)
-	else
-		TriggerEvent('chat:addMessage', {args = {'^1SYSTEM', 'Invalid ped model.'}})
+		if IsModelInCdimage(model) then
+			local playerPed = PlayerPedId()
+			local playerCoords, playerHeading = GetEntityCoords(playerPed), GetEntityHeading(playerPed)
+
+			RDX.Game.SpawnPed(model, playerCoords, playerHeading, function(ped)
+				Citizen.InvokeNative(0x028F76B6E78246EB, playerPed, ped, -1, true)
+			end)
+
+			return
+		end
 	end
+
+	TriggerEvent('chat:addMessage', {args = {'^1SYSTEM', 'Invalid horse model.'}})
 end)
 
 RegisterNetEvent('rdx:createPickup')
@@ -356,6 +363,26 @@ AddEventHandler('rdx:deleteVehicle', function()
 
 	if DoesEntityExist(vehicle) and NetworkHasControlOfEntity(vehicle) then
 		RDX.Game.DeleteVehicle(vehicle)
+	end
+end)
+
+RegisterNetEvent('rdx:deleteHorse')
+AddEventHandler('rdx:deleteHorse', function()
+	local playerPed = PlayerPedId()
+	local horse, attempt = RDX.Game.GetHorseInDirection(), 0
+
+	if IsPedOnMount(playerPed) then
+		horse = GetMount(playerPed)
+	end
+
+	while not NetworkHasControlOfEntity(horse) and attempt < 100 and DoesEntityExist(horse) do
+		Citizen.Wait(100)
+		NetworkRequestControlOfEntity(horse)
+		attempt = attempt + 1
+	end
+
+	if DoesEntityExist(horse) and NetworkHasControlOfEntity(horse) then
+		RDX.Game.DeleteHorse(horse)
 	end
 end)
 

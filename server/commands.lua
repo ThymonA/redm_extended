@@ -28,7 +28,7 @@ RDX.RegisterCommand('horse', 'admin', function(xPlayer, args, showError)
 	local index, horse = RDX.GetHorse(args.horse)
 
 	if (horse) then
-		xPlayer.triggerEvent('rdx:spawnPed', horse.name)
+		xPlayer.triggerEvent('rdx:spawnHorse', horse.name)
 	else
 		showError('Invalid horse name.')
 	end
@@ -39,6 +39,10 @@ end, false, {help = _U('command_horse'), validate = false, arguments = {
 RDX.RegisterCommand({'cardel', 'dv'}, 'admin', function(xPlayer, args, showError)
 	xPlayer.triggerEvent('rdx:deleteVehicle')
 end, false, {help = _U('command_cardel'), validate = false, arguments = {}})
+
+RDX.RegisterCommand({'horsedel', 'dh'}, 'admin', function(xPlayer, args, showError)
+	xPlayer.triggerEvent('rdx:deleteHorse')
+end, false, {help = _U('command_horsedel'), validate = false, arguments = {}})
 
 RDX.RegisterCommand('setaccountmoney', 'admin', function(xPlayer, args, showError)
 	if args.playerId.getAccount(args.account) then

@@ -46,8 +46,8 @@ local function EnumerateEntities(initFunc, moveFunc, disposeFunc)
 
 		local enum = {handle = iter, destructor = disposeFunc}
 		setmetatable(enum, entityEnumerator)
-		local next = true
 
+		--local next = true
 		repeat
 			coroutine.yield(id)
 			next, id = moveFunc(iter)
@@ -88,9 +88,7 @@ function EnumeratePeds()
 end
 
 function EnumerateVehicles()
-	return EnumerateEntities(function(outEntity)
-		return Citizen.InvokeNative(0x15e55694, Citizen.PointerValueIntInitialized(outEntity), Citizen.ReturnResultAnyway(), Citizen.ResultAsInteger())
-	end, FindNextVehicle, EndFindVehicle)
+	return EnumerateEntities(FindFirstVehicle, FindNextVehicle, EndFindVehicle)
 end
 
 function EnumeratePickups()

@@ -379,6 +379,11 @@ RDX.Game.DeleteObject = function(object)
 	DeleteObject(object)
 end
 
+RDX.Game.DeleteHorse = function(horse)
+	SetEntityAsMissionEntity(horse, false, true)
+	DeletePed(horse)
+end
+
 RDX.Game.SpawnVehicle = function(model, coords, heading, cb)
 	model = (type(model) == 'number' and model or GetHashKey(model))
 
@@ -535,6 +540,20 @@ RDX.Game.GetVehicleInDirection = function()
 	local numRayHandle, hit, endCoords, surfaceNormal, entityHit = GetShapeTestResult(rayHandle)
 
 	if hit == 1 and GetEntityType(entityHit) == 2 then
+		return entityHit
+	end
+
+	return nil
+end
+
+RDX.Game.GetHorseInDirection = function()
+	local playerPed    = PlayerPedId()
+	local playerCoords = GetEntityCoords(playerPed)
+	local inDirection  = GetOffsetFromEntityInWorldCoords(playerPed, 0.0, 5.0, 0.0)
+	local rayHandle    = StartShapeTestRay(playerCoords, inDirection, 10, playerPed, 0)
+	local numRayHandle, hit, endCoords, surfaceNormal, entityHit = GetShapeTestResult(rayHandle)
+
+	if hit == 1 and IsEntityAPed(entityHit) and GetPedType(entityHit) == 28 then
 		return entityHit
 	end
 
