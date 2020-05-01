@@ -74,7 +74,7 @@ html {
 }
 
 #inventory_notifications {
-	font-family: bankgothic;
+	font-family: 'RDR Lino';
 	position: absolute;
 	right: 40;
 	bottom: 40;
@@ -112,7 +112,7 @@ html {
 }
 
 .menu .head span {
-	font-family: 'Pricedown';
+	font-family: 'RDR Lino';
 	font-size: 28px;
 	padding-left: 15px;
 	padding-top: 6px;

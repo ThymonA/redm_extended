@@ -605,7 +605,9 @@ RDX.ShowInventory = function()
 				value = v.name,
 				usable = false,
 				rare = false,
-				canRemove = canDrop
+				canRemove = canDrop,
+				submenu = true,
+				description = _U('account_description', v.label)
 			})
 		end
 	end
@@ -621,7 +623,8 @@ RDX.ShowInventory = function()
 				value = v.name,
 				usable = v.usable,
 				rare = v.rare,
-				canRemove = v.canRemove
+				canRemove = v.canRemove,
+				submenu = true
 			})
 		end
 	end
@@ -647,7 +650,8 @@ RDX.ShowInventory = function()
 				rare = false,
 				ammo = ammo,
 				canGiveAmmo = (v.ammo ~= nil),
-				canRemove = true
+				canRemove = true,
+				submenu = true
 			})
 		end
 	end

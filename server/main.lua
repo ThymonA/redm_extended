@@ -96,8 +96,7 @@ end)
 
 
 function loadRDXPlayer(identifier, playerId)
-	local tasks = {}
-
+	local asyncPool = Async.CreatePool()
 	local userData = {
 		accounts = {},
 		inventory = {},
@@ -107,7 +106,7 @@ function loadRDXPlayer(identifier, playerId)
 		weight = 0
 	}
 
-	table.insert(tasks, function(cb)
+	asyncPool.add(function(cb)
 		MySQL.Async.fetchAll('SELECT accounts, job, job_grade, `group`, loadout, position, inventory FROM users WHERE identifier = @identifier', {
 			['@identifier'] = identifier
 		}, function(result)
@@ -228,7 +227,7 @@ function loadRDXPlayer(identifier, playerId)
 		end)
 	end)
 
-	Async.parallel(tasks, function(results)
+	asyncPool.startParallelAsync(function(results)
 		local xPlayer = CreateExtendedPlayer(playerId, identifier, userData.group, userData.accounts, userData.inventory, userData.weight, userData.job, userData.loadout, userData.playerName, userData.coords)
 
 		RDX.Players[playerId] = xPlayer

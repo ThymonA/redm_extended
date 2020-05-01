@@ -164,9 +164,9 @@ RDX.TriggerServerCallback = function(name, requestId, source, cb, ...)
 end
 
 RDX.SavePlayer = function(xPlayer, cb)
-	local asyncTasks = {}
+	local asyncPool = Async.CreatePool()
 
-	table.insert(asyncTasks, function(cb2)
+	asyncPool.add(function(cb2)
 		MySQL.Async.execute('UPDATE users SET accounts = @accounts, job = @job, job_grade = @job_grade, `group` = @group, loadout = @loadout, position = @position, inventory = @inventory WHERE identifier = @identifier', {
 			['@accounts'] = json.encode(xPlayer.getAccounts(true)),
 			['@job'] = xPlayer.job.name,
@@ -181,7 +181,7 @@ RDX.SavePlayer = function(xPlayer, cb)
 		end)
 	end)
 
-	Async.parallel(asyncTasks, function(results)
+	asyncPool.startParallelAsync(function(results)
 		print(('[redm_extended] [^2INFO^7] Saved player "%s^7"'):format(xPlayer.getName()))
 
 		if cb then
@@ -191,20 +191,19 @@ RDX.SavePlayer = function(xPlayer, cb)
 end
 
 RDX.SavePlayers = function(cb)
-	local xPlayers, asyncTasks = RDX.GetPlayers(), {}
+	local xPlayers, asyncPool = RDX.GetPlayers(), Async.CreatePool()
 
 	for i=1, #xPlayers, 1 do
-		table.insert(asyncTasks, function(cb2)
+		asyncPool.add(function(cb2)
 			local xPlayer = RDX.GetPlayerFromId(xPlayers[i])
 			RDX.SavePlayer(xPlayer, cb2)
 		end)
 	end
 
-	Async.parallelLimit(asyncTasks, 8, function(results)
+	asyncPool.startParallelLimitAsync(8, function(results)
 		print(('[redm_extended] [^2INFO^7] Saved %s player(s)'):format(#xPlayers))
-		if cb then
-			cb()
-		end
+
+		if cb then cb() end
 	end)
 end
 
