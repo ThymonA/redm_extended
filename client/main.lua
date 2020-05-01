@@ -290,7 +290,7 @@ AddEventHandler('rdx:spawnHorse', function(model)
 end)
 
 RegisterNetEvent('rdx:createPickup')
-AddEventHandler('rdx:createPickup', function(pickupId, label, coords, type, name, components, tintIndex)
+AddEventHandler('rdx:createPickup', function(pickupId, label, coords, type, name, components)
 	local function setObjectProperties(object)
 		SetEntityAsMissionEntity(object, true, false)
 		PlaceObjectOnGroundProperly(object)
@@ -307,9 +307,7 @@ AddEventHandler('rdx:createPickup', function(pickupId, label, coords, type, name
 
 	if type == 'item_weapon' then
 		local weaponHash = GetHashKey(name)
-		RDX.Streaming.RequestWeaponAsset(weaponHash)
-		local pickupObject = CreateWeaponObject(weaponHash, 50, coords.x, coords.y, coords.z, true, 1.0, 0)
-		SetWeaponObjectTintIndex(pickupObject, tintIndex)
+		local pickupObject = Citizen.InvokeNative(0x9888652B8BA77F73, weaponHash, 50, coords.x, coords.y, coords.z, true, 1.0, 0)
 
 		for k,v in ipairs(components) do
 			local component = RDX.GetWeaponComponent(name, v)
@@ -318,7 +316,7 @@ AddEventHandler('rdx:createPickup', function(pickupId, label, coords, type, name
 
 		setObjectProperties(pickupObject)
 	else
-		RDX.Game.SpawnLocalObject('prop_money_bag_01', coords, setObjectProperties)
+		RDX.Game.SpawnLocalObject('s_mp_moneybag02x', coords, setObjectProperties)
 	end
 end)
 
@@ -478,17 +476,11 @@ Citizen.CreateThread(function()
 				letSleep = false
 
 				if distance < 1 then
-					if IsControlJustReleased(0, 38) then
+					if IsControlJustReleased(0, 0xCEFD9220) then
 						if IsPedOnFoot(playerPed) and (closestDistance == -1 or closestDistance > 3) and not pickup.inRange then
 							pickup.inRange = true
 
-							local dict, anim = 'weapons@first_person@aim_rng@generic@projectile@sticky_bomb@', 'plant_floor'
-							RDX.Streaming.RequestAnimDict(dict)
-							TaskPlayAnim(playerPed, dict, anim, 8.0, 1.0, 1000, 16, 0.0, false, false, false)
-							Citizen.Wait(1000)
-
 							TriggerServerEvent('rdx:onPickup', pickupId)
-							PlaySoundFrontend(-1, 'PICK_UP', 'HUD_FRONTEND_DEFAULT_SOUNDSET', false)
 						end
 					end
 

@@ -253,7 +253,7 @@ RDX.GetItemLabel = function(item)
 	end
 end
 
-RDX.CreatePickup = function(type, name, count, label, playerId, components, tintIndex)
+RDX.CreatePickup = function(type, name, count, label, playerId, components)
 	local pickupId = (RDX.PickupId == 65635 and 0 or RDX.PickupId + 1)
 	local xPlayer = RDX.GetPlayerFromId(playerId)
 	local coords = xPlayer.getCoords()
@@ -268,7 +268,7 @@ RDX.CreatePickup = function(type, name, count, label, playerId, components, tint
 		RDX.Pickups[pickupId].components = components
 	end
 
-	TriggerClientEvent('rdx:createPickup', -1, pickupId, label, coords, type, name, components, tintIndex)
+	TriggerClientEvent('rdx:createPickup', -1, pickupId, label, coords, type, name, components)
 	RDX.PickupId = pickupId
 end
 

@@ -1,6 +1,6 @@
 Locales['en'] = {
   -- Inventory
-  ['inventory'] = 'inventory %s / %s',
+  ['inventory'] = 'Inventory',
   ['use'] = 'use',
   ['give'] = 'give',
   ['remove'] = 'throw',
@@ -35,7 +35,7 @@ Locales['en'] = {
   ['threw_weapon_ammo'] = 'you threw ~b~%s~s~ with ~o~%sx %s~s~',
   ['threw_weapon_already'] = 'you already carry the same weapon',
   ['threw_cannot_pickup'] = 'you cannot pickup that because your inventory is full!',
-  ['threw_pickup_prompt'] = 'press ~y~E~s~ to pickup',
+  ['threw_pickup_prompt'] = 'press [E] to pickup',
 
   -- Key mapping
   ['keymap_showinventory'] = 'show Inventory',

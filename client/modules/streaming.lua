@@ -69,17 +69,3 @@ function RDX.Streaming.RequestAnimDict(animDict, cb)
 		cb()
 	end
 end
-
-function RDX.Streaming.RequestWeaponAsset(weaponHash, cb)
-	if not HasWeaponAssetLoaded(weaponHash) then
-		RequestWeaponAsset(weaponHash)
-
-		while not HasWeaponAssetLoaded(weaponHash) do
-			Citizen.Wait(1)
-		end
-	end
-
-	if cb ~= nil then
-		cb()
-	end
-end
