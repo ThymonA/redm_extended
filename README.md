@@ -1,5 +1,5 @@
 # RedM Extended [RDX]
-⚠️ **Project is still in development and should not be se used right now.**
+![RedM Extended](https://i.imgur.com/OEjfYF0.jpg)
 
 redm_extended is a roleplay framework for RedM, original code is from es_extended based on FiveM. The to-go framework for creating an economy based roleplay server on RedM!
 
