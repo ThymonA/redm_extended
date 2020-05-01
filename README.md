@@ -12,6 +12,7 @@ All credits go to ESX-Org for all the work they had in the original framework (e
 - [RDX Menu Default](https://github.com/TigoDevelopment/rdx_menu_default)
 - [RDX Menu Dialog](https://github.com/TigoDevelopment/rdx_menu_dialog)
 - [Async RedM](https://github.com/TigoDevelopment/redm-async/tree/master)
+- [MySQL (Async) RedM](https://github.com/TigoDevelopment/redm-mysql-async)
 
 ## Features
 - Weight based inventory system
