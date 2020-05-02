@@ -1,5 +1,4 @@
 RDX = {}
-RDX.Players = {}
 RDX.UsableItemsCallbacks = {}
 RDX.Items = {}
 RDX.ServerCallbacks = {}

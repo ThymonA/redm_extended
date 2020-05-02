@@ -19,7 +19,7 @@ server_scripts {
 	'configs/config.horses.lua',
 
 	'server/common.lua',
-	'server/classes/player.lua',
+	'server/objects/player.lua',
 	'server/functions.lua',
 	'server/paycheck.lua',
 	'server/main.lua',

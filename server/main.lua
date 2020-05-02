@@ -228,27 +228,25 @@ function loadRDXPlayer(identifier, playerId)
 	end)
 
 	asyncPool.startParallelAsync(function(results)
-		local xPlayer = CreateExtendedPlayer(playerId, identifier, userData.group, userData.accounts, userData.inventory, userData.weight, userData.job, userData.loadout, userData.playerName, userData.coords)
+		RDX.Player.Initialize(playerId, identifier, userData, function(xPlayer)
+			TriggerEvent('rdx:playerLoaded', playerId, xPlayer)
 
-		RDX.Players[playerId] = xPlayer
+			xPlayer.triggerEvent('rdx:playerLoaded', {
+				accounts = xPlayer.getAccounts(),
+				coords = xPlayer.getCoords(),
+				identifier = xPlayer.getIdentifier(),
+				inventory = xPlayer.getInventory(),
+				job = xPlayer.getJob(),
+				loadout = xPlayer.getLoadout(),
+				maxWeight = xPlayer.getMaxWeight(),
+				money = xPlayer.getMoney()
+			})
 
-		TriggerEvent('rdx:playerLoaded', playerId, xPlayer)
+			xPlayer.triggerEvent('rdx:createMissingPickups', RDX.Pickups)
+			xPlayer.triggerEvent('rdx:registerSuggestions', RDX.RegisteredCommands)
 
-		xPlayer.triggerEvent('rdx:playerLoaded', {
-			accounts = xPlayer.getAccounts(),
-			coords = xPlayer.getCoords(),
-			identifier = xPlayer.getIdentifier(),
-			inventory = xPlayer.getInventory(),
-			job = xPlayer.getJob(),
-			loadout = xPlayer.getLoadout(),
-			maxWeight = xPlayer.getMaxWeight(),
-			money = xPlayer.getMoney()
-		})
-
-		xPlayer.triggerEvent('rdx:createMissingPickups', RDX.Pickups)
-		xPlayer.triggerEvent('rdx:registerSuggestions', RDX.RegisteredCommands)
-
-		print(('[redm_extended] [^2INFO^7] A player with name "%s^7" has connected to the server with assigned player id %s'):format(xPlayer.getName(), playerId))
+			print(('[redm_extended] [^2INFO^7] A player with name "%s^7" has connected to the server with assigned player id %s'):format(xPlayer.getName(), playerId))
+		end)
 	end)
 end
 
