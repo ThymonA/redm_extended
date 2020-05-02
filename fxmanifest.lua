@@ -34,14 +34,13 @@ client_scripts {
 	'locale.lua',
 	'locales/en.lua',
 
-	'controls.lua',
-
 	'configs/config.lua',
 	'configs/config.weapons.lua',
 	'configs/config.horses.lua',
 
 	'client/common.lua',
 	'client/entityiter.lua',
+	'client/main.js',
 	'client/functions.lua',
 	'client/wrapper.lua',
 	'client/main.lua',

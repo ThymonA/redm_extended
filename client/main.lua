@@ -241,6 +241,14 @@ AddEventHandler('rdx:teleport', function(coords)
 	RDX.Game.Teleport(playerPed, coords)
 end)
 
+RegisterNetEvent('rdx:teleportWaypoint')
+AddEventHandler('rdx:teleportWaypoint', function()
+	local playerPed = PlayerPedId()
+	local x, y = table.unpack(GetWaypointCoords())
+
+	RDX.Game.Teleport(playerPed, { x = x, y = y, z = -199.99 })
+end)
+
 RegisterNetEvent('rdx:setJob')
 AddEventHandler('rdx:setJob', function(job)
 	if Config.EnableHud then
@@ -452,7 +460,7 @@ Citizen.CreateThread(function()
 	while true do
 		Citizen.Wait(0)
 
-		if IsControlJustReleased(0, Controls.SelectItemWheel) then -- F4
+		if IsControlJustReleased(0, 0x1F6D95E5) then -- F1
 			if IsInputDisabled(0) and not isDead and not RDX.UI.Menu.IsOpen('default', 'redm_extended', 'inventory') then
 				RDX.ShowInventory()
 			end

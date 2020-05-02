@@ -89,6 +89,7 @@ Locales['en'] = {
   ['command_setcoords_x'] = 'x axis',
   ['command_setcoords_y'] = 'y axis',
   ['command_setcoords_z'] = 'z axis',
+  ['command_teleportwaypoint'] = 'teleport to waypoint',
   ['command_setjob'] = 'set job for a player',
   ['command_setjob_job'] = 'job name',
   ['command_setjob_grade'] = 'job grade',

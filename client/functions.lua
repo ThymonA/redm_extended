@@ -589,6 +589,54 @@ RDX.Game.Utils.DrawText3D = function(coords, text, size, font)
 	end
 end
 
+RDX.Game.DrawMarker = function(markerInfo)
+	markerInfo = markerInfo or {}
+
+	local markerType = markerInfo.markerType or 0
+	local coords = markerInfo.coords or nil
+	local directions = markerInfo.directions or vector3(0.0, 0.0, 0.0)
+	local rotations = markerInfo.rotations or vector3(0.0, 0.0, 0.0)
+	local scales = markerInfo.scales or vector3(1.5, 1.5, 1.5)
+	local colors = markerInfo.colors or vector4(255, 255, 255, 100)
+	local bobUpAndDown = markerInfo.bobUpAndDown or false
+	local faceCamera = markerInfo.faceCamera or false
+	local p19 = markerInfo.p19 or 2
+	local rotate = markerInfo.rotate or false
+	local textureDict = markerInfo.textureDict or false
+	local textureName = markerInfo.textureName or false
+	local drawOnEnts = markerInfo.drawOnEnts or false
+
+	if (markerType == nil or type(markerType) ~= 'number' or coords == nil or type(coords) ~= 'vector3') then
+		return
+	end
+
+	local markerTypes = { [0] = 0x94FDAE17, [1] = 0x6EB7D3BB, [2] = 0x50638AB9, [3] = 0xEC032ADD, [4] = 0x6903B113, [5] = 0x7DCE236, [6] = 0xD6445746, [7] = 0x29FE305A, [8] = 0xE3C923F1, [9] = 0xD57F875E, [10] = 0x40675D1C, [11] = 0x4E94F977, [12] = 0x234BA2E5, [13] = 0xF9B24FB3, [14] = 0x75FEB0E, [15] = 0xDD839756, [16] = 0xE9F6303B }
+
+	if (markerType > 0 and markerType < 17) then
+		markerType = markerTypes[markerType]
+	end
+
+	if (type(directions) ~= 'vector3') then directions = vector3(0.0, 0.0, 0.0) end
+	if (type(rotations) ~= 'vector3') then rotations = vector3(0.0, 0.0, 0.0) end
+	if (type(scales) ~= 'vector3') then scales = vector3(1.5, 1.5, 1.5) end
+	if (type(colors) ~= 'vector4') then colors = vector4(255, 255, 255, 100) end
+	if (type(bobUpAndDown) ~= 'boolean' and type(bobUpAndDown) ~= 'number') then bobUpAndDown = false end
+	if (type(faceCamera) ~= 'boolean' and type(faceCamera) ~= 'number') then faceCamera = false end
+	if (type(p19) ~= 'number') then p19 = 2 end
+	if (type(rotate) ~= 'boolean' and type(rotate) ~= 'number') then rotate = false end
+	if (type(textureDict) ~= 'string') then textureDict = false end
+	if (type(textureName) ~= 'string') then textureName = false end
+	if (type(drawOnEnts) ~= 'boolean' and type(drawOnEnts) ~= 'number') then drawOnEnts = false end
+
+	local posX, posY, posZ = table.unpack(coords)
+	local dirX, dirY, dirZ = table.unpack(directions)
+	local rotX, rotY, rotZ = table.unpack(rotations)
+	local scaleX, scaleY, scaleZ = table.unpack(scales)
+	local red, green, blue, alpha = table.unpack(colors)
+
+	Citizen.InvokeNative(0x2A32FAA57B937173, markerType, posX, posY, posZ, dirX, dirY, dirZ, rotX, rotY, rotZ, scaleX, scaleY, scaleZ, red, green, blue, alpha, bobUpAndDown, faceCamera, p19, rotate, textureDict, textureName, drawOnEnts)
+end
+
 RDX.ShowInventory = function()
 	local playerPed = PlayerPedId()
 	local elements, currentWeight = {}, 0

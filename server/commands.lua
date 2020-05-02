@@ -1,9 +1,14 @@
-RDX.RegisterCommand('setcoords', 'admin', function(xPlayer, args, showError)
+RDX.RegisterCommand({ 'tp', 'teleport', 'setcoords' }, 'admin', function(xPlayer, args, showError)
 	xPlayer.setCoords({x = args.x, y = args.y, z = args.z})
 end, false, {help = _U('command_setcoords'), validate = true, arguments = {
 	{name = 'x', help = _U('command_setcoords_x'), type = 'number'},
 	{name = 'y', help = _U('command_setcoords_y'), type = 'number'},
 	{name = 'z', help = _U('command_setcoords_z'), type = 'number'}
+}})
+
+RDX.RegisterCommand({ 'tpw', 'teleportwaypoint', 'setwaypointcoords' }, 'admin', function(xPlayer, args, showError)
+	xPlayer.triggerEvent('rdx:teleportWaypoint')
+end, false, {help = _U('command_teleportwaypoint'), validate = false, arguments = {
 }})
 
 RDX.RegisterCommand('setjob', 'admin', function(xPlayer, args, showError)
