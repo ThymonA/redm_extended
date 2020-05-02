@@ -21,17 +21,21 @@ end
 RDX.GetWeapon = function(weaponName)
 	weaponName = string.upper(weaponName)
 
-	for k,v in ipairs(Config.Weapons) do
-		if v.name == weaponName then
-			return k, v
+	for i = 1, #Config.Weapons do
+		local weapon = Config.Weapons[i]
+
+		if weapon.name == weaponName then
+			return i, weapon
 		end
 	end
 end
 
 RDX.GetWeaponFromHash = function(weaponHash)
-	for k,v in ipairs(Config.Weapons) do
-		if GetHashKey(v.name) == weaponHash then
-			return v
+	for i = 1, #Config.Weapons do
+		local weapon = Config.Weapons[i]
+
+		if GetHashKey(weapon.name) == weaponHash then
+			return weapon
 		end
 	end
 end
@@ -43,22 +47,27 @@ end
 RDX.GetWeaponLabel = function(weaponName)
 	weaponName = string.upper(weaponName)
 
-	for k,v in ipairs(Config.Weapons) do
-		if v.name == weaponName then
-			return v.label
+	for i = 1, #Config.Weapons do
+		local weapon = Config.Weapons[i]
+
+		if weapon.name == weaponName then
+			return weapon.label
 		end
 	end
 end
 
 RDX.GetWeaponComponent = function(weaponName, weaponComponent)
 	weaponName = string.upper(weaponName)
-	local weapons = Config.Weapons
 
-	for k,v in ipairs(Config.Weapons) do
-		if v.name == weaponName then
-			for k2,v2 in ipairs(v.components) do
-				if v2.name == weaponComponent then
-					return v2
+	for i = 1, #Config.Weapons do
+		local weapon = Config.Weapons[i]
+
+		if weapon.name == weaponName then
+			for i2 = 1, #weapon.components do
+				local component = weapon.components[i2]
+
+				if component.name == weaponComponent then
+					return component
 				end
 			end
 		end
@@ -68,17 +77,21 @@ end
 RDX.GetHorse = function(horseName)
 	horseName = string.lower(horseName)
 
-	for k,v in ipairs(Config.Horses) do
-		if (string.lower(v.name) == horseName or string.lower(v.short) == horseName) then
-			return k, v
+	for i = 1, #Config.Horses do
+		local horse = Config.Horses[i]
+
+		if (string.lower(horse.name) == horseName or string.lower(horse.short) == horseName) then
+			return i, horse
 		end
 	end
 end
 
 RDX.GetHorseFromHash = function(horseHash)
-	for k,v in ipairs(Config.Horses) do
-		if (GetHashKey(v.name) == horseHash) then
-			return v
+	for i = 1, #Config.Horses do
+		local horse = Config.Horses[i]
+
+		if (GetHashKey(horse.name) == horseHash) then
+			return horse
 		end
 	end
 end

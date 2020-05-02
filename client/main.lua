@@ -45,9 +45,11 @@ AddEventHandler('rdx:playerLoaded', function(playerData)
 	SetMaxWantedLevel(0)
 
 	if Config.EnableHud then
-		for k,v in ipairs(playerData.accounts) do
-			local accountTpl = '<div><img class="money" src="img/accounts/' .. v.name .. '.png"/>&nbsp;{{money}}</div>'
-			RDX.UI.HUD.RegisterElement('account_' .. v.name, k, 0, accountTpl, {money = RDX.Math.GroupDigits(v.money)})
+		for i = 1, #playerData.accounts do
+			local account = playerData.accounts[i]
+			local accountTpl = '<div><img class="money" src="img/accounts/' .. account.name .. '.png"/>&nbsp;{{money}}</div>'
+
+			RDX.UI.HUD.RegisterElement('account_' .. account.name, i, 0, accountTpl, {money = RDX.Math.GroupDigits(account.money)})
 		end
 
 		local jobTpl = '<div>{{job_label}} - {{grade_label}}</div>'
@@ -102,21 +104,24 @@ AddEventHandler('rdx:restoreLoadout', function()
 
 	RemoveAllPedWeapons(playerPed, true, true)
 
-	for k,v in ipairs(RDX.PlayerData.loadout) do
-		local weaponName = v.name
+	for i = 1, #RDX.PlayerData.loadout do
+		local loadout = RDX.PlayerData.loadout[i]
+		local weaponName = loadout.name
 		local weaponHash = GetHashKey(weaponName)
 
 		GiveWeaponToPed_2(playerPed, weaponHash, 0, true, false, 0, false, 0.5, 1.0, 0, false, 0, false);
 
 		local ammoType = GetPedAmmoTypeFromWeapon(playerPed, weaponHash)
 
-		for k2,v2 in ipairs(v.components) do
-			local componentHash = RDX.GetWeaponComponent(weaponName, v2).hash
+		for i2 = 1, #loadout.components do
+			local component = loadout.components[i2]
+			local componentHash = RDX.GetWeaponComponent(weaponName, component).hash
+
 			GiveWeaponComponentToEntity(playerPed, componentHash, weaponHash, true)
 		end
 
 		if not ammoTypes[ammoType] then
-			SetPedAmmo(playerPed, weaponHash, v.ammo)
+			SetPedAmmo(playerPed, weaponHash, loadout.ammo)
 			ammoTypes[ammoType] = true
 		end
 	end
@@ -126,9 +131,11 @@ end)
 
 RegisterNetEvent('rdx:setAccountMoney')
 AddEventHandler('rdx:setAccountMoney', function(account)
-	for k,v in ipairs(RDX.PlayerData.accounts) do
-		if v.name == account.name then
-			RDX.PlayerData.accounts[k] = account
+	for i = 1, #RDX.PlayerData.accounts do
+		local _account = RDX.PlayerData.accounts[i]
+
+		if _account.name == account.name then
+			RDX.PlayerData.accounts[i] = account
 			break
 		end
 	end
@@ -142,10 +149,12 @@ end)
 
 RegisterNetEvent('rdx:addInventoryItem')
 AddEventHandler('rdx:addInventoryItem', function(item, count, showNotification)
-	for k,v in ipairs(RDX.PlayerData.inventory) do
-		if v.name == item then
-			RDX.UI.ShowInventoryItemNotification(true, v.label, count - v.count)
-			RDX.PlayerData.inventory[k].count = count
+	for i = 1, #RDX.PlayerData.inventory do
+		local _item = RDX.PlayerData.inventory[i]
+
+		if _item.name == item then
+			RDX.UI.ShowInventoryItemNotification(true, _item.label, count - _item.count)
+			RDX.PlayerData.inventory[i].count = count
 			break
 		end
 	end
@@ -161,10 +170,12 @@ end)
 
 RegisterNetEvent('rdx:removeInventoryItem')
 AddEventHandler('rdx:removeInventoryItem', function(item, count, showNotification)
-	for k,v in ipairs(RDX.PlayerData.inventory) do
-		if v.name == item then
-			RDX.UI.ShowInventoryItemNotification(false, v.label, v.count - count)
-			RDX.PlayerData.inventory[k].count = count
+	for i = 1, #RDX.PlayerData.inventory do
+		local _item = RDX.PlayerData.inventory[i]
+
+		if _item.name == item then
+			RDX.UI.ShowInventoryItemNotification(false, _item.label, _item.count - count)
+			RDX.PlayerData.inventory[i].count = count
 			break
 		end
 	end
@@ -317,8 +328,9 @@ AddEventHandler('rdx:createPickup', function(pickupId, label, coords, type, name
 		local weaponHash = GetHashKey(name)
 		local pickupObject = Citizen.InvokeNative(0x9888652B8BA77F73, weaponHash, 50, coords.x, coords.y, coords.z, true, 1.0, 0)
 
-		for k,v in ipairs(components) do
-			local component = RDX.GetWeaponComponent(name, v)
+		for i = 1, #components do
+			local component = RDX.GetWeaponComponent(name, components[i])
+
 			GiveWeaponComponentToWeaponObject(pickupObject, component.hash)
 		end
 

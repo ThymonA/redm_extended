@@ -22,8 +22,10 @@ end
 
 RDX.RegisterCommand = function(name, group, cb, allowConsole, suggestion)
 	if type(name) == 'table' then
-		for k,v in ipairs(name) do
-			RDX.RegisterCommand(v, group, cb, allowConsole, suggestion)
+		for i = 1, #name do
+			local _name = name[i]
+
+			RDX.RegisterCommand(_name, group, cb, allowConsole, suggestion)
 		end
 
 		return
@@ -64,52 +66,54 @@ RDX.RegisterCommand = function(name, group, cb, allowConsole, suggestion)
 				if not error and command.suggestion.arguments then
 					local newArgs = {}
 
-					for k,v in ipairs(command.suggestion.arguments) do
-						if v.type then
-							if v.type == 'number' then
-								local newArg = tonumber(args[k])
+					for i = 1, #command.suggestion.arguments do
+						local _suggestion = command.suggestion.arguments[i]
+
+						if _suggestion.type then
+							if _suggestion.type == 'number' then
+								local newArg = tonumber(args[i])
 
 								if newArg then
-									newArgs[v.name] = newArg
+									newArgs[_suggestion.name] = newArg
 								else
-									error = _U('commanderror_argumentmismatch_number', k)
+									error = _U('commanderror_argumentmismatch_number', i)
 								end
-							elseif v.type == 'player' or v.type == 'playerId' then
-								local targetPlayer = tonumber(args[k])
+							elseif _suggestion.type == 'player' or _suggestion.type == 'playerId' then
+								local targetPlayer = tonumber(args[i])
 
-								if args[k] == 'me' then targetPlayer = playerId end
+								if args[i] == 'me' then targetPlayer = playerId end
 
 								if targetPlayer then
 									local xTargetPlayer = RDX.GetPlayerFromId(targetPlayer)
 
 									if xTargetPlayer then
-										if v.type == 'player' then
-											newArgs[v.name] = xTargetPlayer
+										if _suggestion.type == 'player' then
+											newArgs[_suggestion.name] = xTargetPlayer
 										else
-											newArgs[v.name] = targetPlayer
+											newArgs[_suggestion.name] = targetPlayer
 										end
 									else
 										error = _U('commanderror_invalidplayerid')
 									end
 								else
-									error = _U('commanderror_argumentmismatch_number', k)
+									error = _U('commanderror_argumentmismatch_number', i)
 								end
-							elseif v.type == 'string' then
-								newArgs[v.name] = args[k]
-							elseif v.type == 'item' then
-								if RDX.Items[args[k]] then
-									newArgs[v.name] = args[k]
+							elseif _suggestion.type == 'string' then
+								newArgs[_suggestion.name] = args[i]
+							elseif _suggestion.type == 'item' then
+								if RDX.Items[args[i]] then
+									newArgs[_suggestion.name] = args[i]
 								else
 									error = _U('commanderror_invaliditem')
 								end
-							elseif v.type == 'weapon' then
-								if RDX.GetWeapon(args[k]) then
-									newArgs[v.name] = string.upper(args[k])
+							elseif _suggestion.type == 'weapon' then
+								if RDX.GetWeapon(args[i]) then
+									newArgs[_suggestion.name] = string.upper(args[i])
 								else
 									error = _U('commanderror_invalidweapon')
 								end
-							elseif v.type == 'any' then
-								newArgs[v.name] = args[k]
+							elseif _suggestion.type == 'any' then
+								newArgs[_suggestion.name] = args[i]
 							end
 						end
 
@@ -139,8 +143,8 @@ RDX.RegisterCommand = function(name, group, cb, allowConsole, suggestion)
 	end, true)
 
 	if type(group) == 'table' then
-		for k,v in ipairs(group) do
-			ExecuteCommand(('add_ace group.%s command.%s allow'):format(v, name))
+		for i = 1, #group do
+			ExecuteCommand(('add_ace group.%s command.%s allow'):format(group[i], name))
 		end
 	else
 		ExecuteCommand(('add_ace group.%s command.%s allow'):format(group, name))
@@ -284,9 +288,13 @@ RDX.DoesJobExist = function(job, grade)
 end
 
 RDX.GetPlayerIdentifier = function(playerId)
-	for k,v in ipairs(GetPlayerIdentifiers(playerId)) do
-		if string.match(v, 'license:') then
-			return string.sub(v, 9)
+	local identifiers = GetPlayerIdentifiers(playerId)
+
+	for i = 1, #identifiers do
+		local identifier = identifiers[i]
+
+		if string.match(identifier, 'license:') then
+			return string.sub(identifier, 9)
 		end
 	end
 end

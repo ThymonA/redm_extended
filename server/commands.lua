@@ -124,9 +124,11 @@ RDX.RegisterCommand({'clearall', 'clsall'}, 'admin', function(xPlayer, args, sho
 end, false, {help = _U('command_clearall')})
 
 RDX.RegisterCommand('clearinventory', 'admin', function(xPlayer, args, showError)
-	for k,v in ipairs(args.playerId.inventory) do
-		if v.count > 0 then
-			args.playerId.setInventoryItem(v.name, 0)
+	for i = 1, #args.playerId.inventory do
+		local item = args.playerId.inventory[i]
+
+		if item.count > 0 then
+			args.playerId.setInventoryItem(item.name, 0)
 		end
 	end
 end, true, {help = _U('command_clearinventory'), validate = true, arguments = {
@@ -134,8 +136,10 @@ end, true, {help = _U('command_clearinventory'), validate = true, arguments = {
 }})
 
 RDX.RegisterCommand('clearloadout', 'admin', function(xPlayer, args, showError)
-	for k,v in ipairs(args.playerId.loadout) do
-		args.playerId.removeWeapon(v.name)
+	for i = 1, #args.playerId.loadout do
+		local weapon = args.playerId.loadout[i]
+
+		args.playerId.removeWeapon(weapon.name)
 	end
 end, true, {help = _U('command_clearloadout'), validate = true, arguments = {
 	{name = 'playerId', help = _U('commandgeneric_playerid'), type = 'player'}

@@ -13,7 +13,11 @@ end
 
 function RDX.Table.Set(t)
 	local set = {}
-	for k,v in ipairs(t) do set[v] = true end
+
+	for i = 1, #t do
+		set[t[i]] = true
+	end
+
 	return set
 end
 

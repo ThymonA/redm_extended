@@ -20,26 +20,32 @@ end
 
 MySQL.ready(function()
 	MySQL.Async.fetchAll('SELECT * FROM items', {}, function(result)
-		for k,v in ipairs(result) do
-			RDX.Items[v.name] = {
-				label = v.label,
-				weight = v.weight,
-				rare = v.rare,
-				canRemove = v.can_remove
+		for i = 1, #result do
+			local item = result[i]
+
+			RDX.Items[item.name] = {
+				label = item.label,
+				weight = item.weight,
+				rare = item.rare,
+				canRemove = item.can_remove
 			}
 		end
 	end)
 
 	MySQL.Async.fetchAll('SELECT * FROM jobs', {}, function(jobs)
-		for k,v in ipairs(jobs) do
-			RDX.Jobs[v.name] = v
-			RDX.Jobs[v.name].grades = {}
+		for i = 1, #jobs do
+			local job = jobs[i]
+
+			RDX.Jobs[job.name] = job
+			RDX.Jobs[job.name].grades = {}
 		end
 
 		MySQL.Async.fetchAll('SELECT * FROM job_grades', {}, function(jobGrades)
-			for k,v in ipairs(jobGrades) do
-				if RDX.Jobs[v.job_name] then
-					RDX.Jobs[v.job_name].grades[tostring(v.grade)] = v
+			for i = 1, #jobGrades do
+				local jobGrade = jobGrades[i]
+
+				if RDX.Jobs[jobGrade.job_name] then
+					RDX.Jobs[jobGrade.job_name].grades[tostring(jobGrade.grade)] = jobGrade
 				else
 					print(('[redm_extended] [^3WARNING^7] Ignoring job grades for "%s" due to missing job'):format(v.job_name))
 				end

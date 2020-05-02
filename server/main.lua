@@ -466,8 +466,8 @@ AddEventHandler('rdx:onPickup', function(pickupId)
 				success = true
 				xPlayer.addWeapon(pickup.name, pickup.count)
 
-				for k,v in ipairs(pickup.components) do
-					xPlayer.addWeaponComponent(pickup.name, v)
+				for i = 1, #pickup.components do
+					xPlayer.addWeaponComponent(pickup.name, pickup.components[i])
 				end
 			end
 		end

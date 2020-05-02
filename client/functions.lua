@@ -477,8 +477,10 @@ end
 
 RDX.Game.GetPlayers = function(onlyOtherPlayers, returnKeyValue, returnPeds)
 	local players, myPlayer = {}, PlayerId()
+	local activePlayers = GetActivePlayers()
 
-	for k,player in ipairs(GetActivePlayers()) do
+	for i = 1, #activePlayers do
+		local player = activePlayers[i]
 		local ped = GetPlayerPed(player)
 
 		if DoesEntityExist(ped) and ((onlyOtherPlayers and player ~= myPlayer) or not onlyOtherPlayers) then
@@ -660,44 +662,47 @@ RDX.ShowInventory = function()
 		end
 	end
 
-	for k,v in ipairs(RDX.PlayerData.inventory) do
-		if v.count > 0 then
-			currentWeight = currentWeight + (v.weight * v.count)
+	for i = 1, #RDX.PlayerData.inventory do
+		local item = RDX.PlayerData.inventory[i]
+
+		if item.count > 0 then
+			currentWeight = currentWeight + (item.weight * item.count)
 
 			table.insert(elements, {
-				label = ('%s x%s'):format(v.label, v.count),
-				count = v.count,
+				label = ('%s x%s'):format(item.label, item.count),
+				count = item.count,
 				type = 'item_standard',
-				value = v.name,
-				usable = v.usable,
-				rare = v.rare,
-				canRemove = v.canRemove,
+				value = item.name,
+				usable = item.usable,
+				rare = item.rare,
+				canRemove = item.canRemove,
 				submenu = true
 			})
 		end
 	end
 
-	for k,v in ipairs(Config.Weapons) do
-		local weaponHash = GetHashKey(v.name)
+	for i = 1, #Config.Weapons do
+		local weapon = Config.Weapons[i]
+		local weaponHash = GetHashKey(weapon.name)
 
 		if HasPedGotWeapon(playerPed, weaponHash, false) then
 			local ammo, label = GetAmmoInPedWeapon(playerPed, weaponHash)
 
-			if v.ammo then
-				label = ('%s - %s %s'):format(v.label, ammo, v.ammo.label)
+			if weapon.ammo then
+				label = ('%s - %s %s'):format(weapon.label, ammo, weapon.ammo.label)
 			else
-				label = v.label
+				label = weapon.label
 			end
 
 			table.insert(elements, {
 				label = label,
 				count = 1,
 				type = 'item_weapon',
-				value = v.name,
+				value = weapon.name,
 				usable = false,
 				rare = false,
 				ammo = ammo,
-				canGiveAmmo = (v.ammo ~= nil),
+				canGiveAmmo = (weapon.ammo ~= nil),
 				canRemove = true,
 				submenu = true
 			})
@@ -748,8 +753,8 @@ RDX.ShowInventory = function()
 					local players = {}
 					elements = {}
 
-					for k,playerNearby in ipairs(playersNearby) do
-						players[GetPlayerServerId(playerNearby)] = true
+					for i = 1, #playersNearby do
+						players[GetPlayerServerId(playersNearby[i])] = true
 					end
 
 					RDX.TriggerServerCallback('rdx:getPlayerNames', function(returnedPlayers)
