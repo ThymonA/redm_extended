@@ -16,12 +16,10 @@ All credits go to ESX-Org for all the work they had in the original framework (e
 
 ## Features
 - Weight based inventory system
-- Weapons support, including support for attachments and tints
+- Weapons support
 - Supports different money accounts (defaulted with cash, bank and black money)
-- Many official resources available in our GitHub
-- Job system, with grades and clothes support
-- Supports multiple languages, most strings are localized
-- Easy to use API for developers to easily integrate ESX to their projects
+- Job system with grades
+- Easy to use API for developers to easily integrate RDX to their projects
 - Register your own commands easily, with argument validation, chat suggestion and using FXServer ACL
 
 ## Screenshots
