@@ -23,4 +23,5 @@ All credits go to ESX-Org for all the work they had in the original framework (e
 - Register your own commands easily, with argument validation, chat suggestion and using FXServer ACL
 
 ## Screenshots
+![RedM-Extended](https://i.imgur.com/Ijczndn.jpg)
 ![RedM-Extended](https://i.imgur.com/amlwgHj.jpg)
