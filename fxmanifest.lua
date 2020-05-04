@@ -96,9 +96,7 @@ files {
 	'html/img/accounts/money.png'
 }
 
-exports {
-	'getSharedObject'
-}
+export 'getSharedObject'
 
 server_exports {
 	'getSharedObject'

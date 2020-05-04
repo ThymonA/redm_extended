@@ -6,8 +6,6 @@ Citizen.CreateThread(function()
 
 		if NetworkIsPlayerActive(PlayerId()) then
 			TriggerServerEvent('rdx:onPlayerJoined')
-			ShutdownLoadingScreen()
-			DoScreenFadeIn(10000)
 			break
 		end
 	end
@@ -18,10 +16,8 @@ AddEventHandler('rdx:playerLoaded', function(playerData)
 	RDX.PlayerLoaded = true
 	RDX.PlayerData = playerData
 
-	local playerPed = PlayerPedId()
-
 	-- check if player is coming from loading screen
-	if GetEntityModel(playerPed) == 0x0D7114C9 or GetEntityModel(playerPed) == 0x00B69710 then
+	if GetEntityModel(PlayerPedId()) == 0x0D7114C9 or GetEntityModel(PlayerPedId()) == 0x00B69710 then
 		local defaultModel = 0xF5C1611E -- mp_male
 
 		if (IsModelInCdimage(defaultModel)) then
@@ -44,47 +40,48 @@ AddEventHandler('rdx:playerLoaded', function(playerData)
 	ClearPlayerWantedLevel(PlayerId())
 	SetMaxWantedLevel(0)
 
-	if Config.EnableHud then
-		for i = 1, #playerData.accounts do
-			local account = playerData.accounts[i]
-			local accountTpl = '<div><img class="money" src="img/accounts/' .. account.name .. '.png"/>&nbsp;{{money}}</div>'
-
-			RDX.UI.HUD.RegisterElement('account_' .. account.name, i, 0, accountTpl, {money = RDX.Math.GroupDigits(account.money)})
-		end
-
-		local jobTpl = '<div>{{job_label}} - {{grade_label}}</div>'
-
-		if playerData.job.grade_label == '' or playerData.job.grade_label == playerData.job.label then
-			jobTpl = '<div>{{job_label}}</div>'
-		end
-
-		RDX.UI.HUD.RegisterElement('job', #playerData.accounts, 0, jobTpl, {
-			job_label = playerData.job.label,
-			grade_label = playerData.job.grade_label
-		})
-	end
-
 	RDX.Game.Teleport(PlayerPedId(), {
 		x = playerData.coords.x,
 		y = playerData.coords.y,
 		z = playerData.coords.z + 0.25,
 		heading = playerData.coords.heading
 	}, function()
+		ShutdownLoadingScreen()
+		DoScreenFadeIn(1000)
+		FreezeEntityPosition(PlayerPedId(), false)
+		StartServerSyncLoops()
+
 		TriggerServerEvent('rdx:onPlayerSpawn')
 		TriggerEvent('rdx:onPlayerSpawn')
 		TriggerEvent('playerSpawned') -- compatibility with old scripts, will be removed soon
 		TriggerEvent('rdx:restoreLoadout')
 
-		Citizen.Wait(3000)
-		ShutdownLoadingScreen()
-		FreezeEntityPosition(PlayerPedId(), false)
-		DoScreenFadeIn(10000)
-		StartServerSyncLoops()
+		if Config.EnableHud then
+			for i = 1, #playerData.accounts do
+				local account = playerData.accounts[i]
+				local accountTpl = '<div><img class="money" src="img/accounts/' .. account.name .. '.png"/>&nbsp;{{money}}</div>'
+
+				RDX.UI.HUD.RegisterElement('account_' .. account.name, i, 0, accountTpl, {money = RDX.Math.GroupDigits(account.money)})
+			end
+
+			local jobTpl = '<div>{{job_label}} - {{grade_label}}</div>'
+
+			if playerData.job.grade_label == '' or playerData.job.grade_label == playerData.job.label then
+				jobTpl = '<div>{{job_label}}</div>'
+			end
+
+			RDX.UI.HUD.RegisterElement('job', #playerData.accounts, 0, jobTpl, {
+				job_label = playerData.job.label,
+				grade_label = playerData.job.grade_label
+			})
+		end
 	end)
 end)
 
 RegisterNetEvent('rdx:setMaxWeight')
-AddEventHandler('rdx:setMaxWeight', function(newMaxWeight) RDX.PlayerData.maxWeight = newMaxWeight end)
+AddEventHandler('rdx:setMaxWeight', function(newMaxWeight)
+	RDX.PlayerData.maxWeight = newMaxWeight
+end)
 
 AddEventHandler('rdx:onPlayerSpawn', function() isDead = false end)
 AddEventHandler('rdx:onPlayerDeath', function() isDead = true end)

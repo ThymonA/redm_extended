@@ -2,9 +2,9 @@ Config = {}
 Config.Locale = 'en'
 
 Config.Accounts = {
-	bank = _U('account_bank'),
-	black_money = _U('account_black_money'),
-	money = _U('account_money')
+	{ name = 'bank', label = _U('account_bank'), priority = 0 },
+	{ name = 'black_money', label = _U('account_black_money'), priority = 1 },
+	{ name = 'money', label = _U('account_money'), priority = 2 }
 }
 
 Config.StartingAccountMoney = {bank = 50000}

@@ -9,14 +9,6 @@ RDX.PickupId = 0
 RDX.Jobs = {}
 RDX.RegisteredCommands = {}
 
-AddEventHandler('rdx:getSharedObject', function(cb)
-	cb(RDX)
-end)
-
-function getSharedObject()
-	return RDX
-end
-
 MySQL.ready(function()
 	MySQL.Async.fetchAll('SELECT * FROM items', {}, function(result)
 		for i = 1, #result do
@@ -76,4 +68,16 @@ AddEventHandler('rdx:triggerServerCallback', function(name, requestId, ...)
 	RDX.TriggerServerCallback(name, requestId, playerId, function(...)
 		TriggerClientEvent('rdx:serverCallback', playerId, requestId, ...)
 	end, ...)
+end)
+
+AddEventHandler('rdx:getSharedObject', function(cb)
+	cb(RDX)
+end)
+
+function getSharedObject()
+	return RDX
+end
+
+exports('getSharedObject', function()
+	return RDX
 end)

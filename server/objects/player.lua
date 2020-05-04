@@ -1,5 +1,5 @@
-RDX.Player	= {}
-RDX.Players = {}
+RDX.Player				= {}
+RDX.Players 			= {}
 
 -- Creating a player object
 RDX.Player.Initialize = function(playerId, identifier, userData, cb)
@@ -32,6 +32,7 @@ RDX.Player.Initialize = function(playerId, identifier, userData, cb)
 		RDX.Players[u].name = userData.playerName or 'Unknown'
 		RDX.Players[u].variables = {}
 		RDX.Players[u].maxWeight = Config.maxWeight or 25
+		RDX.Players[u].createdAt = os.time()
 
 		ExecuteCommand(('add_principal identifier.license:%s group.%s'):format(RDX.Players[u].identifier, RDX.Players[u].group))
 

@@ -2,6 +2,10 @@ RDX.Table = {}
 
 -- nil proof alternative to #table
 function RDX.Table.SizeOf(t)
+	if (t ~= nil and #t > 0) then
+		return #t
+	end
+
 	local count = 0
 
 	for _,_ in pairs(t) do

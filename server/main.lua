@@ -29,36 +29,9 @@ end)
 RegisterNetEvent('rdx:onPlayerJoined')
 AddEventHandler('rdx:onPlayerJoined', function()
 	if not RDX.Players[source] then
-		onPlayerJoined(source)
+		RDX.Player.LoadRDXPlayer(source)
 	end
 end)
-
-function onPlayerJoined(playerId)
-	local identifier = RDX.GetPlayerIdentifier(playerId)
-
-	if identifier then
-		MySQL.Async.fetchScalar('SELECT 1 FROM users WHERE identifier = @identifier', {
-			['@identifier'] = identifier
-		}, function(result)
-			if result then
-				loadRDXPlayer(identifier, playerId)
-			else
-				local accounts = {}
-
-				for account,money in pairs(Config.StartingAccountMoney) do
-					accounts[account] = money
-				end
-
-				MySQL.Async.execute('INSERT INTO users (accounts, identifier) VALUES (@accounts, @identifier)', {
-					['@accounts'] = json.encode(accounts),
-					['@identifier'] = identifier
-				}, function(rowsChanged)
-					loadRDXPlayer(identifier, playerId)
-				end)
-			end
-		end)
-	end
-end
 
 AddEventHandler('onResourceStop', function(resourceName)
 	if (resourceName ~= GetCurrentResourceName()) then
@@ -74,8 +47,6 @@ AddEventHandler('onResourceStop', function(resourceName)
 	while not playersSaved do
 		Citizen.Wait(0)
 	end
-
-	RDX.Players = {}
 end)
 
 AddEventHandler('playerConnecting', function(name, setCallback, deferrals)
@@ -87,6 +58,8 @@ AddEventHandler('playerConnecting', function(name, setCallback, deferrals)
 		if RDX.GetPlayerFromIdentifier(identifier) then
 			deferrals.done(('There was an error loading your character!\nError code: identifier-active\n\nThis error is caused by a player on this server who has the same identifier as you have. Make sure you are not playing on the same Rockstar account.\n\nYour Rockstar identifier: %s'):format(identifier))
 		else
+			RDX.Player.CreatePlayerIfNotExists(playerId)
+
 			deferrals.done()
 		end
 	else
@@ -94,8 +67,33 @@ AddEventHandler('playerConnecting', function(name, setCallback, deferrals)
 	end
 end)
 
+RDX.Player.CreatePlayerIfNotExists = function(playerId)
+	local identifier = RDX.GetPlayerIdentifier(playerId)
 
-function loadRDXPlayer(identifier, playerId)
+	if identifier then
+		MySQL.Async.fetchScalar('SELECT COUNT(*) AS `count` FROM `users` WHERE `identifier` = @identifier', {
+			['@identifier'] = identifier
+		}, function(result)
+			if result == nil or result == 0 or (type(result) == 'table' and (result[1] == nil or result[1].count <= 0)) then
+				local accounts = {}
+
+				for account,money in pairs(Config.StartingAccountMoney) do
+					accounts[account] = money
+				end
+
+				MySQL.Async.execute('INSERT INTO users (accounts, identifier) VALUES (@accounts, @identifier)', {
+					['@accounts'] = json.encode(accounts),
+					['@identifier'] = identifier
+				}, function(rowsChanged)
+					print(('[redm_extended] [^2INFO^7] A player with name "%s^7" has been created'):format(GetPlayerName(playerId)))
+				end)
+			end
+		end)
+	end
+end
+
+RDX.Player.LoadRDXPlayer = function(playerId)
+	local identifier = RDX.GetPlayerIdentifier(playerId)
 	local asyncPool = Async.CreatePool()
 	local userData = {
 		accounts = {},
@@ -122,12 +120,16 @@ function loadRDXPlayer(identifier, playerId)
 				end
 			end
 
-			for account,label in pairs(Config.Accounts) do
-				table.insert(userData.accounts, {
-					name = account,
-					money = foundAccounts[account] or Config.StartingAccountMoney[account] or 0,
-					label = label
-				})
+			table.sort(Config.Accounts, function(account1, account2)
+				return account1.priority < account2.priority
+			end)
+
+			for index,account in pairs(Config.Accounts) do
+				userData.accounts[index] = {
+					name = account.name,
+					money = foundAccounts[account.name] or Config.StartingAccountMoney[account.name] or 0,
+					label = account.label
+				}
 			end
 
 			-- Job
@@ -316,8 +318,8 @@ AddEventHandler('rdx:giveInventoryItem', function(target, type, itemName, itemCo
 			sourceXPlayer.removeAccountMoney(itemName, itemCount)
 			targetXPlayer.addAccountMoney   (itemName, itemCount)
 
-			sourceXPlayer.showNotification(_U('gave_account_money', RDX.Math.GroupDigits(itemCount), Config.Accounts[itemName], targetXPlayer.name))
-			targetXPlayer.showNotification(_U('received_account_money', RDX.Math.GroupDigits(itemCount), Config.Accounts[itemName], sourceXPlayer.name))
+			sourceXPlayer.showNotification(_U('gave_account_money', RDX.Math.GroupDigits(itemCount), RDX.GetAccountLabel(itemName), targetXPlayer.name))
+			targetXPlayer.showNotification(_U('received_account_money', RDX.Math.GroupDigits(itemCount), RDX.GetAccountLabel(itemName), sourceXPlayer.name))
 		else
 			sourceXPlayer.showNotification(_U('imp_invalid_amount'))
 		end

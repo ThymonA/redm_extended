@@ -100,6 +100,26 @@ RDX.GetHorseList = function()
 	return Config.Horses
 end
 
+RDX.GetAccount = function(accountName)
+	accountName = string.lower(accountName or 'unknown')
+
+	for i = 1, #Config.Accounts do
+		local account = Config.Accounts[i]
+
+		if (string.lower(account.name) == accountName) then
+			return i, account
+		end
+	end
+end
+
+RDX.GetAccountLabel = function(accountName)
+	local index, account = RDX.GetAccount(accountName)
+
+	if (account ~= nil) then
+		return account.label
+	end
+end
+
 RDX.DumpTable = function(table, nb)
 	if nb == nil then
 		nb = 0
