@@ -8,11 +8,13 @@ Because I still had the complete original repo, I decided to use that code for R
 All credits go to ESX-Org for all the work they had in the original framework (es_extended).
 
 ## Links & Read more
+- [RDX Framework Documentation](https://rdx-framework.cfx.digital/)
 - [RedM Native Reference](https://vespura.com/doc/natives/)
 - [RDX Menu Default](https://github.com/TigoDevelopment/rdx_menu_default)
 - [RDX Menu Dialog](https://github.com/TigoDevelopment/rdx_menu_dialog)
 - [Async RedM](https://github.com/TigoDevelopment/redm-async/tree/master)
 - [MySQL (Async) RedM](https://github.com/TigoDevelopment/redm-mysql-async)
+- [RDX Framework Discord](https://discord.gg/hqfAFnX)
 
 ## Features
 - Weight based inventory system
