@@ -295,14 +295,6 @@ end
 RDX.Game.Teleport = function(entity, coords, cb)
 	if DoesEntityExist(entity) then
 		RequestCollisionAtCoord(coords.x, coords.y, coords.z)
-		local timeout = 0
-
-		-- we can get stuck here if any of the axies are "invalid"
-		while not HasCollisionLoadedAroundEntity(entity) and timeout < 2000 do
-			Citizen.Wait(0)
-			timeout = timeout + 1
-		end
-
 		SetEntityCoords(entity, coords.x, coords.y, coords.z, false, false, false, false)
 
 		if type(coords) == 'table' and coords.heading then

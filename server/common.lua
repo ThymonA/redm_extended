@@ -57,7 +57,7 @@ end)
 RegisterServerEvent('rdx:clientLog')
 AddEventHandler('rdx:clientLog', function(msg)
 	if Config.EnableDebug then
-		print(('[redm_extended] [^2TRACE^7] %s^7'):format(msg))
+		print(('[redm_extended] [DEBUG] %s'):format(msg))
 	end
 end)
 

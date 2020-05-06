@@ -8,6 +8,8 @@ description 'RMX (RedM Extended)'
 version '1.0.0'
 
 server_scripts {
+	'libs/libs.lua',
+
 	'@async/async.lua',
 	'@mysql-async/lib/MySQL.lua',
 
@@ -31,6 +33,8 @@ server_scripts {
 }
 
 client_scripts {
+	'libs/libs.lua',
+
 	'locale.lua',
 	'locales/en.lua',
 

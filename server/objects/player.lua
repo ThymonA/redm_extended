@@ -106,11 +106,9 @@ RDX.Player.Initialize = function(playerId, identifier, userData, cb)
 			if minimal then
 				local minimalAccounts = {}
 
-				for i = 1, #RDX.Players[u].accounts do
-					local account = RDX.Players[u].accounts[i]
-
+				foreach(RDX.Players[u].accounts, function(account)
 					minimalAccounts[account.name] = account.money
-				end
+				end)
 
 				return minimalAccounts
 			else
@@ -119,26 +117,22 @@ RDX.Player.Initialize = function(playerId, identifier, userData, cb)
 		end
 
 		RDX.Players[u].getAccount = function(account)
-			for i = 1, #RDX.Players[u].accounts do
-				local _account = RDX.Players[u].accounts[i]
-
+			return foreach(RDX.Players[u].accounts, function(_account)
 				if _account.name == account then
 					return _account
 				end
-			end
+			end)
 		end
 
 		RDX.Players[u].getInventory = function(minimal)
 			if minimal then
 				local minimalInventory = {}
 
-				for i = 1, #RDX.Players[u].inventory do
-					local item = RDX.Players[u].inventory[i]
-
+				foreach(RDX.Players[u].inventory, function(item)
 					if item.count > 0 then
 						minimalInventory[item.name] = item.count
 					end
-				end
+				end)
 
 				return minimalInventory
 			else
@@ -154,27 +148,23 @@ RDX.Player.Initialize = function(playerId, identifier, userData, cb)
 			if minimal then
 				local minimalLoadout = {}
 
-				for i = 1, #RDX.Players[u].loadout do
-					local _loadout = RDX.Players[u].loadout[i]
-
+				foreach(RDX.Players[u].loadout, function(_loadout)
 					minimalLoadout[_loadout.name] = {ammo = _loadout.ammo}
 
 					if #_loadout.components > 0 then
 						local components = {}
 
-						for i2 = 1, #_loadout.components do
-							local component = _loadout.components[i2]
-
+						foreach(_loadout.components, function(component)
 							if component ~= 'clip_default' then
 								table.insert(components, component)
 							end
-						end
+						end)
 
 						if #components > 0 then
 							minimalLoadout[_loadout.name].components = components
 						end
 					end
-				end
+				end)
 
 				return minimalLoadout
 			else
@@ -195,8 +185,8 @@ RDX.Player.Initialize = function(playerId, identifier, userData, cb)
 				local account = RDX.Players[u].getAccount(accountName)
 
 				if account then
-					local prevMoney = account.money
 					local newMoney = RDX.Math.Round(money)
+
 					account.money = newMoney
 
 					RDX.Players[u].triggerEvent('rdx:setAccountMoney', account)
@@ -231,15 +221,11 @@ RDX.Player.Initialize = function(playerId, identifier, userData, cb)
 		end
 
 		RDX.Players[u].getInventoryItem = function(name)
-			for i = 1, #RDX.Players[u].inventory do
-				local item = RDX.Players[u].inventory[i]
-
+			return foreach(RDX.Players[u].inventory, function(item)
 				if item.name == name then
 					return item
 				end
-			end
-
-			return
+			end)
 		end
 
 		RDX.Players[u].addInventoryItem = function(name, count)
@@ -349,6 +335,7 @@ RDX.Player.Initialize = function(playerId, identifier, userData, cb)
 				end
 
 				TriggerEvent('rdx:setJob', RDX.Players[u].source, RDX.Players[u].job, lastJob)
+
 				RDX.Players[u].triggerEvent('rdx:setJob', RDX.Players[u].job)
 			else
 				print(('[redm_extended] [^3WARNING^7] Ignoring invalid .setJob() usage for "%s"'):format(RDX.Players[u].identifier))
@@ -410,20 +397,18 @@ RDX.Player.Initialize = function(playerId, identifier, userData, cb)
 		RDX.Players[u].removeWeapon = function(weaponName)
 			local weaponLabel
 
-			for i = 1, #RDX.Players[u].loadout do
-				local _loadout = RDX.Players[u].loadout[i]
-
+			foreach(RDX.Players[u].loadout, function(_loadout, i)
 				if _loadout.name == weaponName then
 					weaponLabel = _loadout.label
 
-					for i2 = 1, #_loadout.components do
-						RDX.Players[u].removeWeaponComponent(weaponName, _loadout.components[i2])
-					end
+					foreach(_loadout.components, function(component)
+						RDX.Players[u].removeWeaponComponent(weaponName, component)
+					end)
 
 					table.remove(RDX.Players[u].loadout, i)
-					break
+					return
 				end
-			end
+			end)
 
 			if weaponLabel then
 				RDX.Players[u].triggerEvent('rdx:removeWeapon', weaponName)
@@ -439,14 +424,12 @@ RDX.Player.Initialize = function(playerId, identifier, userData, cb)
 
 				if component then
 					if RDX.Players[u].hasWeaponComponent(weaponName, weaponComponent) then
-						for i = 1, #RDX.Players[u].loadout[loadoutNum].components do
-							local _component = RDX.Players[u].loadout[loadoutNum].components[i]
-
+						foreach(RDX.Players[u].loadout[loadoutNum].components, function(_component, i)
 							if _component == weaponComponent then
 								table.remove(RDX.Players[u].loadout[loadoutNum].components, i)
-								break
+								return
 							end
-						end
+						end)
 
 						RDX.Players[u].triggerEvent('rdx:removeWeaponComponent', weaponName, weaponComponent)
 						RDX.Players[u].triggerEvent('rdx:removeInventoryItem', component.label, false, true)
@@ -468,38 +451,30 @@ RDX.Player.Initialize = function(playerId, identifier, userData, cb)
 			local loadoutNum, weapon = RDX.Players[u].getWeapon(weaponName)
 
 			if weapon then
-				for i = 1, #weapon.components do
-					if weapon.components[i] == weaponComponent then
+				return foreach(weapon.components, function(component)
+					if component == weaponComponent then
 						return true
 					end
-				end
-
-				return false
+				end) or false
 			else
 				return false
 			end
 		end
 
 		RDX.Players[u].hasWeapon = function(weaponName)
-			for i = 1, #RDX.Players[u].loadout do
-				if RDX.Players[u].loadout[i].name == weaponName then
+			return foreach(RDX.Players[u].loadout, function(loadout)
+				if loadout == weaponName then
 					return true
 				end
-			end
-
-			return false
+			end) or false
 		end
 
 		RDX.Players[u].getWeapon = function(weaponName)
-			for i = 1, #RDX.Players[u].loadout do
-				local _loadout = RDX.Players[u].loadout[i]
-
+			return foreach(RDX.Players[u].loadout, function(_loadout, i)
 				if _loadout.name == weaponName then
 					return i, _loadout
 				end
-			end
-
-			return
+			end)
 		end
 
 		RDX.Players[u].showNotification = function(msg, flash, saveToBrief, hudColorIndex)

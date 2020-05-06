@@ -1,26 +1,24 @@
-Citizen.CreateThread(function()
-	local resourcesStopped = {}
+local resourcesStopped = {}
 
-	for resourceName,reason in pairs(Config.IncompatibleResourcesToStop) do
-		local status = GetResourceState(resourceName)
+async:foreach(Config.IncompatibleResourcesToStop, function(reason, resourceName)
+	local status = GetResourceState(resourceName)
 
-		if status == 'started' or status == 'starting' then
-			while GetResourceState(resourceName) == 'starting' do
-				Citizen.Wait(100)
-			end
-
-			ExecuteCommand(('stop %s'):format(resourceName))
-
-			resourcesStopped[resourceName] = reason
+	if status == 'started' or status == 'starting' then
+		while GetResourceState(resourceName) == 'starting' do
+			Citizen.Wait(100)
 		end
-	end
 
+		ExecuteCommand(('stop %s'):format(resourceName))
+
+		resourcesStopped[resourceName] = reason
+	end
+end, function()
 	if RDX.Table.SizeOf(resourcesStopped) > 0 then
 		local allStoppedResources = ''
 
-		for resourceName,reason in pairs(resourcesStopped) do
+		foreach(resourcesStopped, function(reason, resourceName)
 			allStoppedResources = ('%s\n- ^3%s^7, %s'):format(allStoppedResources, resourceName, reason)
-		end
+		end)
 
 		print(('[redm_extended] [^3WARNING^7] Stopped %s incompatible resource(s) that can cause issues when used with RDX. They are not needed and can safely be removed from your server, remove these resource(s) from your resource directory and your configuration file:%s'):format(RDX.Table.SizeOf(resourcesStopped), allStoppedResources))
 	end
@@ -94,7 +92,6 @@ end
 
 RDX.Player.LoadRDXPlayer = function(playerId)
 	local identifier = RDX.GetPlayerIdentifier(playerId)
-	local asyncPool = Async.CreatePool()
 	local userData = {
 		accounts = {},
 		inventory = {},
@@ -104,33 +101,37 @@ RDX.Player.LoadRDXPlayer = function(playerId)
 		weight = 0
 	}
 
-	asyncPool.add(function(cb)
-		MySQL.Async.fetchAll('SELECT accounts, job, job_grade, `group`, loadout, position, inventory FROM users WHERE identifier = @identifier', {
-			['@identifier'] = identifier
-		}, function(result)
-			local job, grade, jobObject, gradeObject = result[1].job, tostring(result[1].job_grade)
+	if (Config.EnableDebug) then
+		userData.startTimer = GetGameTimer()
+	end
+
+	MySQL.Async.fetchAll('SELECT accounts, job, job_grade, `group`, loadout, position, inventory FROM users WHERE identifier = @identifier', {
+		['@identifier'] = identifier
+	}, function(result)
+		async:foreach(result, function(user)
+			local job, grade, jobObject, gradeObject = user.job, tostring(user.job_grade)
 			local foundAccounts, foundItems = {}, {}
 
 			-- Accounts
-			if result[1].accounts and result[1].accounts ~= '' then
-				local accounts = json.decode(result[1].accounts)
+			if user.accounts and user.accounts ~= '' then
+				local accounts = json.decode(user.accounts)
 
-				for account,money in pairs(accounts) do
+				foreach(accounts, function(money, account)
 					foundAccounts[account] = money
-				end
+				end)
 			end
 
 			table.sort(Config.Accounts, function(account1, account2)
 				return account1.priority < account2.priority
 			end)
 
-			for index,account in pairs(Config.Accounts) do
+			foreach(Config.Accounts, function(account, index)
 				userData.accounts[index] = {
 					name = account.name,
 					money = foundAccounts[account.name] or Config.StartingAccountMoney[account.name] or 0,
 					label = account.label
 				}
-			end
+			end)
 
 			-- Job
 			if RDX.DoesJobExist(job, grade) then
@@ -157,10 +158,10 @@ RDX.Player.LoadRDXPlayer = function(playerId)
 			if gradeObject.skin_female then userData.job.skin_female = json.decode(gradeObject.skin_female) end
 
 			-- Inventory
-			if result[1].inventory and result[1].inventory ~= '' then
-				local inventory = json.decode(result[1].inventory)
+			if user.inventory and user.inventory ~= '' then
+				local inventory = json.decode(user.inventory)
 
-				for name,count in pairs(inventory) do
+				foreach(inventory, function(count, name)
 					local item = RDX.Items[name]
 
 					if item then
@@ -168,10 +169,10 @@ RDX.Player.LoadRDXPlayer = function(playerId)
 					else
 						print(('[redm_extended] [^3WARNING^7] Ignoring invalid item "%s" for "%s"'):format(name, identifier))
 					end
-				end
+				end)
 			end
 
-			for name,item in pairs(RDX.Items) do
+			foreach(RDX.Items, function(item, name)
 				local count = foundItems[name] or 0
 				if count > 0 then userData.weight = userData.weight + (item.weight * count) end
 
@@ -184,24 +185,24 @@ RDX.Player.LoadRDXPlayer = function(playerId)
 					rare = item.rare,
 					canRemove = item.canRemove
 				})
-			end
+			end)
 
 			table.sort(userData.inventory, function(a, b)
 				return a.label < b.label
 			end)
 
 			-- Group
-			if result[1].group then
-				userData.group = result[1].group
+			if user.group then
+				userData.group = user.group
 			else
 				userData.group = 'user'
 			end
 
 			-- Loadout
-			if result[1].loadout and result[1].loadout ~= '' then
-				local loadout = json.decode(result[1].loadout)
+			if user.loadout and user.loadout ~= '' then
+				local loadout = json.decode(user.loadout)
 
-				for name,weapon in pairs(loadout) do
+				foreach(loadout, function(weapon, name)
 					local label = RDX.GetWeaponLabel(name)
 
 					if label then
@@ -214,40 +215,41 @@ RDX.Player.LoadRDXPlayer = function(playerId)
 							components = weapon.components
 						})
 					end
-				end
+				end)
 			end
 
 			-- Position
-			if result[1].position and result[1].position ~= '' then
-				userData.coords = json.decode(result[1].position)
+			if user.position and user.position ~= '' then
+				userData.coords = json.decode(user.position)
 			else
 				print('[redm_extended] [^3WARNING^7] Column "position" in "users" table is missing required default value. Using backup coords, fix your database.')
 				userData.coords = {x = -269.4, y = -955.3, z = 31.2, heading = 205.8}
 			end
+		end, function()
+			RDX.Player.Initialize(playerId, identifier, userData, function(xPlayer)
+				TriggerEvent('rdx:playerLoaded', playerId, xPlayer)
 
-			cb()
-		end)
-	end)
+				xPlayer.triggerEvent('rdx:playerLoaded', {
+					playerId = xPlayer.source,
+					accounts = xPlayer.getAccounts(),
+					coords = xPlayer.getCoords(),
+					identifier = xPlayer.getIdentifier(),
+					inventory = xPlayer.getInventory(),
+					job = xPlayer.getJob(),
+					loadout = xPlayer.getLoadout(),
+					maxWeight = xPlayer.getMaxWeight(),
+					money = xPlayer.getMoney()
+				})
 
-	asyncPool.startParallelAsync(function(results)
-		RDX.Player.Initialize(playerId, identifier, userData, function(xPlayer)
-			TriggerEvent('rdx:playerLoaded', playerId, xPlayer)
+				xPlayer.triggerEvent('rdx:createMissingPickups', RDX.Pickups)
+				xPlayer.triggerEvent('rdx:registerSuggestions', RDX.RegisteredCommands)
 
-			xPlayer.triggerEvent('rdx:playerLoaded', {
-				accounts = xPlayer.getAccounts(),
-				coords = xPlayer.getCoords(),
-				identifier = xPlayer.getIdentifier(),
-				inventory = xPlayer.getInventory(),
-				job = xPlayer.getJob(),
-				loadout = xPlayer.getLoadout(),
-				maxWeight = xPlayer.getMaxWeight(),
-				money = xPlayer.getMoney()
-			})
+				print(('[redm_extended] [^2INFO^7] A player with name "%s^7" has connected to the server with assigned player id %s'):format(xPlayer.getName(), playerId))
 
-			xPlayer.triggerEvent('rdx:createMissingPickups', RDX.Pickups)
-			xPlayer.triggerEvent('rdx:registerSuggestions', RDX.RegisteredCommands)
-
-			print(('[redm_extended] [^2INFO^7] A player with name "%s^7" has connected to the server with assigned player id %s'):format(xPlayer.getName(), playerId))
+				if (Config.EnableDebug) then
+					print(('[redm_extended] [DEBUG] RDX.Player.LoadRDXPlayer took %sms for creating player id %s'):format((GetGameTimer() - userData.startTimer), playerId))
+				end
+			end)
 		end)
 	end)
 end

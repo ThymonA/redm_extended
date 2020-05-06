@@ -5,6 +5,10 @@ Citizen.CreateThread(function()
 		Citizen.Wait(0)
 
 		if NetworkIsPlayerActive(PlayerId()) then
+			if (Config.EnableDebug) then
+				RDX.StartTimer = GetGameTimer()
+			end
+
 			TriggerServerEvent('rdx:onPlayerJoined')
 			break
 		end
@@ -13,6 +17,10 @@ end)
 
 RegisterNetEvent('rdx:playerLoaded')
 AddEventHandler('rdx:playerLoaded', function(playerData)
+	if (Config.EnableDebug) then
+		TriggerServerEvent('rdx:clientLog', ('after %sms `rdx:playerLoaded` was called from the server after `rdx:onPlayerJoined` event has been triggerd for player id %s'):format((GetGameTimer() - RDX.StartTimer), playerData.playerId))
+	end
+
 	RDX.PlayerLoaded = true
 	RDX.PlayerData = playerData
 
@@ -74,6 +82,10 @@ AddEventHandler('rdx:playerLoaded', function(playerData)
 				job_label = playerData.job.label,
 				grade_label = playerData.job.grade_label
 			})
+		end
+
+		if (Config.EnableDebug) then
+			TriggerServerEvent('rdx:clientLog', ('rdx:onPlayerJoined took %sms for loading player id %s'):format((GetGameTimer() - RDX.StartTimer), playerData.playerId))
 		end
 	end)
 end)
