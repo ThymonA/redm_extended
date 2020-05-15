@@ -288,13 +288,36 @@ RDX.DoesJobExist = function(job, grade)
 end
 
 RDX.GetPlayerIdentifier = function(playerId)
+	local identifierType, identifierLength = RDX.GetIdentifierType()
 	local identifiers = GetPlayerIdentifiers(playerId)
 
 	for i = 1, #identifiers do
 		local identifier = identifiers[i]
 
-		if string.match(identifier, 'license:') then
-			return string.sub(identifier, 9)
+		if string.match(string.lower(identifier), identifierType .. ':') then
+			return string.sub(identifier, identifierLength + 2)
 		end
 	end
+end
+
+RDX.GetIdentifierType = function()
+	local defaultIdentifier = Config.DefaultIdentifier or 'license'
+
+	if (string.lower(defaultIdentifier) == 'steam') then
+		return 'steam', 5
+	elseif (string.lower(defaultIdentifier) == 'license' or string.lower(defaultIdentifier) == 'redm' or string.lower(defaultIdentifier) == 'rockstar') then
+		return 'license', 7
+	elseif (string.lower(defaultIdentifier) == 'fivem' or string.lower(defaultIdentifier) == 'forum') then
+		return 'fivem', 5
+	elseif (string.lower(defaultIdentifier) == 'discord') then
+		return 'discord', 7
+	elseif (string.lower(defaultIdentifier) == 'xbl' or string.lower(defaultIdentifier) == 'xbox') then
+		return 'xbl', 3
+	elseif (string.lower(defaultIdentifier) == 'live' or string.lower(defaultIdentifier) == 'microsoft') then
+		return 'live', 4
+	elseif (string.lower(defaultIdentifier) == 'ip') then
+		return 'ip', 2
+	end
+
+	return 'license', 7
 end

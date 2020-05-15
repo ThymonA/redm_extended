@@ -50,9 +50,24 @@ Locales['en'] = {
   ['account_bank'] = 'bank',
   ['account_black_money'] = 'dirty Money',
   ['account_money'] = 'cash',
-
   ['act_imp'] = 'action impossible',
   ['in_vehicle'] = 'you cannot give anything to someone in a vehicle',
+
+  -- Licenses
+  ['steam'] = 'Steam',
+  ['license'] = 'Rockstar',
+  ['fivem'] = 'FiveM Forum',
+  ['discord'] = 'Discord',
+  ['xbl'] = 'XBOX Live',
+  ['live'] = 'Microsoft',
+  ['ip'] = 'IP',
+  ['steam_error'] = 'You need to open your steam client before connecting to the server. Do you have Steam open? Restart RedM or try again later.',
+  ['license_error'] = 'You need a valid copy of Red Dead Redemption II in order to join the server. Do you have a valid copy? Restart RedM or try again later.',
+  ['fivem_error'] = 'You need to have an forum account on https://forum.cfx.re/, than you need to link it with RedM, you can do this under settings in RedM. Have you already linked your account? Restart RedM or try again later.',
+  ['discord_error'] = 'You need to have discord linked to RedM in order to join the server. Have you already linked Discord? Restart RedM or try again later.',
+  ['xbl_error'] = 'You need to be signed in with a Microsoft account on your computer to be able to join this server. Are you already logged in with your Microsoft account on your computer? Restart RedM and try again later.',
+  ['live_error'] = 'You need to be signed in with a Microsoft account on your computer to be able to join this server. Are you already logged in with your Microsoft account on your computer? Restart RedM and try again later.',
+  ['ip_error'] = 'We were unable to detect your IP, restart RedM and try again later.',
 
   -- Commands
   ['command_car'] = 'spawn a vehicle',

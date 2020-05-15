@@ -1,28 +1,30 @@
 local resourcesStopped = {}
 
-async:foreach(Config.IncompatibleResourcesToStop, function(reason, resourceName)
-	local status = GetResourceState(resourceName)
-
-	if status == 'started' or status == 'starting' then
-		while GetResourceState(resourceName) == 'starting' do
-			Citizen.Wait(100)
+if (Config.AutoStopResources or false) then
+	async:foreach(Config.IncompatibleResourcesToStop, function(reason, resourceName)
+		local status = GetResourceState(resourceName)
+	
+		if status == 'started' or status == 'starting' then
+			while GetResourceState(resourceName) == 'starting' do
+				Citizen.Wait(100)
+			end
+	
+			ExecuteCommand(('stop %s'):format(resourceName))
+	
+			resourcesStopped[resourceName] = reason
 		end
-
-		ExecuteCommand(('stop %s'):format(resourceName))
-
-		resourcesStopped[resourceName] = reason
-	end
-end, function()
-	if RDX.Table.SizeOf(resourcesStopped) > 0 then
-		local allStoppedResources = ''
-
-		foreach(resourcesStopped, function(reason, resourceName)
-			allStoppedResources = ('%s\n- ^3%s^7, %s'):format(allStoppedResources, resourceName, reason)
-		end)
-
-		print(('[redm_extended] [^3WARNING^7] Stopped %s incompatible resource(s) that can cause issues when used with RDX. They are not needed and can safely be removed from your server, remove these resource(s) from your resource directory and your configuration file:%s'):format(RDX.Table.SizeOf(resourcesStopped), allStoppedResources))
-	end
-end)
+	end, function()
+		if RDX.Table.SizeOf(resourcesStopped) > 0 then
+			local allStoppedResources = ''
+	
+			foreach(resourcesStopped, function(reason, resourceName)
+				allStoppedResources = ('%s\n- ^3%s^7, %s'):format(allStoppedResources, resourceName, reason)
+			end)
+	
+			print(('[redm_extended] [^3WARNING^7] Stopped %s incompatible resource(s) that can cause issues when used with RDX. They are not needed and can safely be removed from your server, remove these resource(s) from your resource directory and your configuration file:%s'):format(RDX.Table.SizeOf(resourcesStopped), allStoppedResources))
+		end
+	end)
+end
 
 RegisterNetEvent('rdx:onPlayerJoined')
 AddEventHandler('rdx:onPlayerJoined', function()
@@ -49,19 +51,23 @@ end)
 
 AddEventHandler('playerConnecting', function(name, setCallback, deferrals)
 	deferrals.defer()
-	local playerId, identifier = source, RDX.GetPlayerIdentifier(source)
+
+	local playerId = source
+	local identifierType = RDX.GetIdentifierType()
+	local identifier = RDX.GetPlayerIdentifier(playerId)
+
 	Citizen.Wait(100)
 
 	if identifier then
 		if RDX.GetPlayerFromIdentifier(identifier) then
-			deferrals.done(('There was an error loading your character!\nError code: identifier-active\n\nThis error is caused by a player on this server who has the same identifier as you have. Make sure you are not playing on the same Rockstar account.\n\nYour Rockstar identifier: %s'):format(identifier))
+			deferrals.done(('There was an error loading your character!\nError code: identifier-active\n\nThis error is caused by a player on this server who has the same identifier as you have. Make sure you are not playing on the same %s account.\n\nYour %s identifier: %s'):format(_U(identifierType), _U(identifierType), identifier))
 		else
 			RDX.Player.CreatePlayerIfNotExists(playerId)
 
 			deferrals.done()
 		end
 	else
-		deferrals.done('There was an error loading your character!\nError code: identifier-missing\n\nThe cause of this error is not known, your identifier could not be found. Please come back later or report this problem to the server administration team.')
+		deferrals.done(('There was an error loading your character!\nError code: identifier-missing\n\n%s'):format(_U(identifierType .. '_error')))
 	end
 end)
 
