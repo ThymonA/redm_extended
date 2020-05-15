@@ -293,7 +293,7 @@ RDX.GetPlayerIdentifier = function(playerId)
 	for i = 1, #identifiers do
 		local identifier = identifiers[i]
 
-		if string.match(identifier, 'license:') then
+		if string.match(identifier, 'steam:') then
 			return string.sub(identifier, 9)
 		end
 	end
