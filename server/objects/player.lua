@@ -470,7 +470,7 @@ RDX.Player.Initialize = function(playerId, identifier, userData, cb)
 		end
 
 		RDX.Players[u].getWeapon = function(weaponName)
-			for k,v in ipairs(RDX.Players[u].loadout) do
+			for k,v in pairs(RDX.Players[u].loadout) do
 				if v.name == weaponName then
 					return k, v
 				end
