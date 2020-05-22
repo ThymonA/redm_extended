@@ -463,18 +463,19 @@ RDX.Player.Initialize = function(playerId, identifier, userData, cb)
 
 		RDX.Players[u].hasWeapon = function(weaponName)
 			return foreach(RDX.Players[u].loadout, function(loadout)
-				if loadout == weaponName then
+				if loadout.name == weaponName then
 					return true
 				end
 			end) or false
 		end
 
 		RDX.Players[u].getWeapon = function(weaponName)
-			return foreach(RDX.Players[u].loadout, function(_loadout, i)
-				if _loadout.name == weaponName then
-					return i, _loadout
+			for k,v in pairs(RDX.Players[u].loadout) do
+				if v.name == weaponName then
+					return k, v
 				end
-			end)
+			end
+			return
 		end
 
 		RDX.Players[u].showNotification = function(msg, flash, saveToBrief, hudColorIndex)
