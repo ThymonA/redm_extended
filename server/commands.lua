@@ -139,7 +139,9 @@ RDX.RegisterCommand('clearloadout', 'admin', function(xPlayer, args, showError)
 	for i = 1, #args.playerId.loadout do
 		local weapon = args.playerId.loadout[i]
 
-		args.playerId.removeWeapon(weapon.name)
+		if weapon then
+			args.playerId.removeWeapon(weapon.name)
+		end
 	end
 end, true, {help = _U('command_clearloadout'), validate = true, arguments = {
 	{name = 'playerId', help = _U('commandgeneric_playerid'), type = 'player'}

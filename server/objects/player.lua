@@ -354,7 +354,8 @@ RDX.Player.Initialize = function(playerId, identifier, userData, cb)
 					tintIndex = 0
 				})
 
-				RDX.Players[u].triggerEvent('rdx:addWeapon', weaponName, ammo)
+				RDX.Players[u].triggerEvent('rdx:addWeapon', weaponName, 0) --Prevent duplicate ammo
+				RDX.Players[u].triggerEvent('rdx:setWeaponAmmo', weaponName, ammo)
 				RDX.Players[u].triggerEvent('rdx:addInventoryItem', weaponLabel, false, true)
 			end
 		end
