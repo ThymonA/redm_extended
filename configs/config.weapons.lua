@@ -367,7 +367,7 @@ Config.Weapons = {
 		key = 'w_rifle_carcano01',
 		hash = GetHashKey('WEAPON_SNIPERRIFLE_CARCANO'),
 		ammo = Config.AmmoTypes.RIFLE,
-		group = Config.WeaponGroups.RIFLE,
+		group = Config.WeaponGroups.SNIPER,
 		label = _U('weapon_sniperrifle_carcano'),
 		components = {}
 	},
@@ -376,7 +376,7 @@ Config.Weapons = {
 		key = 'w_rifle_rollingblock01',
 		hash = GetHashKey('WEAPON_SNIPERRIFLE_ROLLINGBLOCK'),
 		ammo = Config.AmmoTypes.RIFLE,
-		group = Config.WeaponGroups.RIFLE,
+		group = Config.WeaponGroups.SNIPER,
 		label = _U('weapon_sniperrifle_rollingblock'),
 		components = {}
 	},
@@ -385,7 +385,7 @@ Config.Weapons = {
 		key = 'w_rifle_rollingblock01',
 		hash = GetHashKey('WEAPON_SNIPERRIFLE_ROLLINGBLOCK_EXOTIC'),
 		ammo = Config.AmmoTypes.RIFLE,
-		group = Config.WeaponGroups.RIFLE,
+		group = Config.WeaponGroups.SNIPER,
 		label = _U('weapon_sniperrifle_rollingblock_exotic'),
 		components = {}
 	},
