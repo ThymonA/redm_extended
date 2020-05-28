@@ -235,9 +235,11 @@ RegisterNetEvent('rdx:removeWeapon')
 AddEventHandler('rdx:removeWeapon', function(weaponName)
 	local playerPed = PlayerPedId()
 	local weaponHash = GetHashKey(weaponName)
+	local ammoType = Citizen.InvokeNative(0x5C2EA6C44F515F34, weaponHash)
 
-	RemoveWeaponFromPed(playerPed, weaponHash)
+	RemoveWeaponFromPed(playerPed, weaponHash, true, ammoType)
 	SetPedAmmo(playerPed, weaponHash, 0) -- remove leftover ammo
+	Citizen.InvokeNative(0xDCD2A934D65CB497, playerPed, weaponHash, 0) -- remove leftover ammo in clip
 end)
 
 RegisterNetEvent('rdx:removeWeaponComponent')
