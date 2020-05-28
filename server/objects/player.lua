@@ -397,20 +397,16 @@ RDX.Player.Initialize = function(playerId, identifier, userData, cb)
 
 		RDX.Players[u].removeWeapon = function(weaponName)
 			local weaponLabel
-
-			foreach(RDX.Players[u].loadout, function(_loadout, i)
-				if _loadout.name == weaponName then
-					weaponLabel = _loadout.label
-
-					foreach(_loadout.components, function(component)
+			for k, v in pairs(RDX.Players[u].loadout) do
+				if v.name == weaponName then
+					weaponLabel = v.label
+					foreach(v.components, function(component)
 						RDX.Players[u].removeWeaponComponent(weaponName, component)
 					end)
-
-					table.remove(RDX.Players[u].loadout, i)
-					return
+					table.remove(RDX.Players[u].loadout, k)
+					break
 				end
-			end)
-
+			end
 			if weaponLabel then
 				RDX.Players[u].triggerEvent('rdx:removeWeapon', weaponName)
 				RDX.Players[u].triggerEvent('rdx:removeInventoryItem', weaponLabel, false, true)
